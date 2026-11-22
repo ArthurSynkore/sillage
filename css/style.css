@@ -1,0 +1,644 @@
+/* ==========================================================
+   SILLAGE — feuille de styles
+   1. Variables        5. Hero
+   2. Base             6. Traversée (bateau + sillage)
+   3. Boutons          7. Résultats
+   4. Navigation       8. Pour qui
+   9. Phare (transition)   10. Fonctionnement   11. Rendez-vous
+   ========================================================== */
+
+/* ---------- 1. Variables ---------- */
+:root {
+  --paper: #f5f2ea;       /* papier de carte marine */
+  --ink: #0b2231;         /* encre */
+  --ink-soft: #4b5d68;
+  --sea: #0a2a3c;         /* eau profonde */
+  --sea-rgb: 10 42 60;
+  --foam: #f5f2ea;        /* écume */
+  --signal: #e4572e;      /* accent orange */
+  --flash: #ffd65a;       /* éclat du phare */
+
+  --font-title: "Instrument Serif", "Times New Roman", serif;
+  --font-text: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+
+  --header-h: 76px;
+  --pad: clamp(20px, 5vw, 72px);
+}
+
+/* ---------- 2. Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-text);
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, p { margin: 0; }
+::selection { background: var(--signal); color: #fff; }
+
+:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; border-radius: 4px; }
+
+.skip-link {
+  position: absolute; left: 16px; top: -60px; z-index: 200;
+  padding: 10px 16px; background: var(--ink); color: var(--paper); border-radius: 6px;
+}
+.skip-link:focus { top: 12px; }
+
+.eyebrow {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase;
+}
+.eyebrow__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--signal); }
+.eyebrow__coord { opacity: .55; font-weight: 400; }
+.eyebrow--clair { color: var(--foam); }
+
+/* ---------- 3. Boutons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 13px 24px;
+  font-size: 15px; font-weight: 500; white-space: nowrap;
+  border: 1px solid transparent; border-radius: 999px;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.btn--primary { background: var(--ink); color: var(--paper); }
+.btn--primary:hover { background: var(--signal); }
+.btn--ghost { border-color: currentColor; padding: 9px 18px; font-size: 14px; }
+.btn--ghost:hover { background: var(--signal); border-color: var(--signal); color: #fff; }
+.btn--link { padding-left: 4px; padding-right: 4px; }
+.btn--link span { transition: transform .2s; }
+.btn--link:hover span { transform: translateX(4px); }
+
+/* ---------- 4. Navigation ---------- */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: var(--header-h);
+}
+/* Deux couches superposées : encre (par défaut) et claire (découpée par le sillage). */
+.header__layer {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 0 var(--pad);
+  color: var(--ink);
+}
+.header__layer--light { color: var(--foam); clip-path: polygon(0 0, 0 0, 0 0); }
+body.menu-open .header__layer--light { display: none; }
+
+.logo { display: inline-flex; align-items: center; gap: 10px; }
+.logo__mark { width: 22px; height: 22px; }
+.logo__dot { fill: var(--signal); }
+.logo__text {
+  font-size: 15px; font-weight: 600; letter-spacing: .34em; text-transform: uppercase;
+}
+
+.nav__list { display: flex; gap: clamp(16px, 2.6vw, 36px); }
+.nav__link {
+  position: relative; padding: 8px 0;
+  font-size: 14px; font-weight: 500; opacity: .78;
+  transition: opacity .2s;
+}
+.nav__link::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px;
+  background: currentColor; transform: scaleX(0); transform-origin: left;
+  transition: transform .25s;
+}
+.nav__link:hover { opacity: 1; }
+.nav__link:hover::after { transform: scaleX(1); }
+
+.burger {
+  display: none;
+  width: 44px; height: 44px; margin-right: -10px; padding: 0;
+  background: none; border: 0; color: inherit; cursor: pointer;
+  flex-direction: column; align-items: center; justify-content: center; gap: 7px;
+}
+.burger span { display: block; width: 24px; height: 1.5px; background: currentColor; transition: transform .25s; }
+.burger[aria-expanded="true"] span:first-child { transform: translateY(4.25px) rotate(45deg); }
+.burger[aria-expanded="true"] span:last-child { transform: translateY(-4.25px) rotate(-45deg); }
+
+/* Menu mobile plein écran */
+.menu {
+  position: fixed; inset: 0; z-index: 90;
+  padding: calc(var(--header-h) + 24px) var(--pad) 32px;
+  background: var(--paper);
+  overflow-y: auto;
+  opacity: 0; visibility: hidden;
+  transition: opacity .2s, visibility .2s;
+}
+body.menu-open .menu { opacity: 1; visibility: visible; }
+body.menu-open { overflow: hidden; }
+.menu__nav { display: flex; flex-direction: column; }
+.menu__nav a:not(.btn) {
+  padding: 14px 0;
+  font-family: var(--font-title); font-size: 34px; line-height: 1.2;
+  border-bottom: 1px solid rgb(11 34 49 / .14);
+}
+.menu__nav .btn { margin-top: 28px; }
+
+@media (max-width: 860px) {
+  :root { --header-h: 64px; }
+  .nav, .header__cta { display: none; }
+  .burger { display: flex; }
+}
+
+/* ---------- 5. Hero ---------- */
+.hero {
+  position: relative;
+  min-height: 100vh; min-height: 100svh;
+  padding: calc(var(--header-h) + 16px) var(--pad) 96px;
+  display: flex; flex-direction: column; justify-content: center;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+/* Carte marine en fond */
+.hero__chart {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  color: var(--ink); opacity: .11;
+  pointer-events: none;
+}
+.hero__sondes { font-family: var(--font-mono); font-size: 13px; fill: currentColor; opacity: 2.6; }
+
+/* Rose des vents */
+.compass {
+  position: absolute; top: 50%; right: clamp(-60px, 5vw, 110px);
+  width: min(40vw, 470px);
+  transform: translateY(-50%);
+  color: var(--ink); opacity: .8;
+  pointer-events: none;
+}
+.compass__lettres { font-family: var(--font-mono); font-size: 11px; text-anchor: middle; }
+.compass__aiguille path { stroke: var(--signal); stroke-width: 1.2; fill: none; }
+.compass__aiguille circle { fill: var(--paper); stroke: var(--signal); stroke-width: 1.2; }
+
+.hero__content { position: relative; max-width: 800px; }
+
+.hero h1 {
+  margin-top: 26px;
+  font-family: var(--font-title); font-weight: 400;
+  font-size: clamp(44px, 7.4vw, 108px);
+  line-height: .98; letter-spacing: -.012em;
+  text-wrap: balance;
+}
+.hero h1 em { font-style: italic; color: var(--signal); }
+
+.hero__lead {
+  margin-top: 26px; max-width: 520px;
+  font-size: clamp(16px, 1.25vw, 18px); color: var(--ink-soft);
+}
+
+.hero__actions { margin-top: 34px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; }
+
+.hero__bas { position: absolute; left: var(--pad); bottom: 30px; max-width: 62%; }
+.hero__moteurs {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em; color: var(--ink-soft);
+}
+.hero__moteurs span {
+  display: block; margin-bottom: 4px;
+  font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7;
+}
+
+/* Repère de départ du bateau (à 84 % de la largeur, comme dans main.js) */
+.hero__cap {
+  position: absolute; left: 84%; bottom: 0;
+  transform: translateX(-50%);
+  display: none; flex-direction: column; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  white-space: nowrap; color: var(--ink-soft);
+}
+.js .hero__cap { display: flex; transition: opacity .3s; }
+.is-sailing .hero__cap { opacity: 0; }
+.hero__cap span { width: 1px; height: 34px; background: currentColor; transform-origin: bottom; animation: cap 2.4s ease-in-out infinite; }
+@keyframes cap { 0%, 100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+
+@media (max-width: 860px) {
+  .compass { top: auto; bottom: 8%; right: -32vw; width: 86vw; transform: none; opacity: .22; }
+  .hero { padding-bottom: 110px; }
+  .hero__cap { font-size: 10px; }
+}
+@media (max-height: 600px) {
+  .hero__bas { display: none; }
+  .hero h1 { margin-top: 16px; font-size: clamp(36px, 6vw, 64px); }
+  .hero__lead, .hero__actions { margin-top: 16px; }
+}
+
+/* ---------- 6. Traversée (bateau + sillage) ----------
+   Sans JavaScript : hero puis résultats, l'un sous l'autre.
+   Avec JavaScript (.js) : l'écran reste figé et le sillage découvre les résultats. */
+.voyage { position: relative; }
+.wake__rim, .wake__water, .wake__lines, .boat { display: none; }
+
+.js .voyage { height: calc(100vh + 220vh); height: calc(100svh + 220vh); }
+.js .voyage__stage {
+  position: sticky; top: 0;
+  height: 100vh; height: 100svh;
+  overflow: hidden;
+}
+.js .hero { position: absolute; inset: 0; min-height: 0; }
+.js .wake__rim, .js .wake__water, .js .wake__lines, .js .wake__content {
+  display: block; position: absolute; inset: 0;
+  clip-path: polygon(0 0, 0 0, 0 0);
+}
+/* L'eau : une copie du hero (créée par main.js), déformée et floutée, puis teintée.
+   Le filtre #eau est défini en haut de index.html. */
+.js .wake__rim, .js .wake__water { overflow: hidden; background: var(--paper); }
+.js .wake__rim::after, .js .wake__water::after { content: ""; position: absolute; inset: 0; }
+.js .wake__rim { z-index: 1; }
+.js .wake__rim > .hero { filter: url(#eau) blur(1.5px); }
+.js .wake__rim::after { background: rgb(var(--sea-rgb) / .07); }
+.js .wake__water { z-index: 2; }
+.js .wake__water > .hero { filter: url(#eau) blur(9px) saturate(130%); }
+.js .wake__water::after { background: rgb(var(--sea-rgb) / var(--alpha, .72)); }
+.wake__rim .hero__cap, .wake__water .hero__cap { display: none; }
+.js .wake__lines { z-index: 3; width: 100%; height: 100%; clip-path: none; pointer-events: none; }
+.js .wake__content { z-index: 4; }
+
+.js .boat {
+  display: block; position: absolute; left: 0; top: 0; z-index: 5;
+  transform-origin: 15px 20px;
+  overflow: visible; pointer-events: none; will-change: transform;
+  filter: drop-shadow(0 5px 7px rgb(11 34 49 / .28));
+}
+.boat__coque { fill: var(--paper); stroke: var(--ink); stroke-width: 1.2; }
+.boat__pont { fill: none; stroke: var(--ink); stroke-width: .7; opacity: .55; }
+.boat__mat { fill: var(--signal); }
+
+/* Ancre du lien « Résultats » : positionnée à la fin de la traversée */
+.voyage__anchor { position: absolute; left: 0; bottom: 100vh; bottom: 100svh; }
+
+/* ---------- 7. Résultats ---------- */
+.resultats {
+  display: flex; align-items: center;
+  min-height: 100vh; min-height: 100svh;
+  padding: calc(var(--header-h) + 16px) var(--pad) 40px;
+  background: var(--sea); color: var(--foam);
+}
+.js .resultats { display: flex; min-height: 0; background: none; }
+.resultats__inner { width: 100%; max-width: 1240px; margin: 0 auto; }
+
+.resultats h2 {
+  margin-top: 22px; max-width: 12em;
+  font-family: var(--font-title); font-weight: 400;
+  font-size: clamp(34px, 5vw, 72px); line-height: 1.02; letter-spacing: -.01em;
+}
+
+.stats {
+  margin-top: clamp(28px, 6vh, 72px);
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px clamp(20px, 3vw, 48px);
+}
+.stat { padding-top: 18px; border-top: 1px solid rgb(245 242 234 / .28); }
+.stat__num {
+  font-family: var(--font-title);
+  font-size: clamp(46px, 6.4vw, 96px); line-height: 1;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.stat__num small { font-size: .5em; margin: 0 .08em; color: var(--signal); }
+.stat__label { margin-top: 12px; max-width: 24ch; font-size: 14px; line-height: 1.5; opacity: .78; }
+
+.resultats__note {
+  margin-top: clamp(24px, 5vh, 56px);
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; opacity: .5;
+}
+
+@media (max-width: 860px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .stat__label { font-size: 13px; }
+}
+
+/* ---------- 8. Pour qui ---------- */
+.pourqui {
+  padding: clamp(72px, 12vh, 140px) var(--pad) clamp(80px, 14vh, 160px);
+  background: var(--sea); color: var(--foam);
+  scroll-margin-top: 0;
+}
+.pourqui__inner { max-width: 1240px; margin: 0 auto; }
+.pourqui h2 {
+  margin-top: 22px;
+  font-family: var(--font-title); font-weight: 400;
+  font-size: clamp(34px, 5vw, 72px); line-height: 1.02; letter-spacing: -.01em;
+}
+
+.pourqui__cols {
+  margin-top: clamp(36px, 7vh, 72px);
+  display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2.4vw, 32px);
+}
+.pourqui__col { padding: clamp(24px, 3.2vw, 44px); border-radius: 4px; }
+.pourqui__col--oui { background: var(--paper); color: var(--ink); }
+.pourqui__col--non { border: 1px solid rgb(245 242 234 / .24); color: rgb(245 242 234 / .82); }
+
+.pourqui h3 {
+  margin: 0;
+  font-family: var(--font-title); font-weight: 400;
+  font-size: clamp(26px, 2.6vw, 38px); line-height: 1.1;
+}
+.pourqui__col--oui h3 { color: var(--signal); }
+
+.pourqui__liste { margin: clamp(16px, 2.4vw, 28px) 0 0; padding: 0; list-style: none; }
+.pourqui__liste li {
+  display: grid; grid-template-columns: 20px 1fr; align-items: start; gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid rgb(11 34 49 / .14);
+  font-size: clamp(15px, 1.2vw, 17px); line-height: 1.45;
+}
+.pourqui__col--non .pourqui__liste li { border-top-color: rgb(245 242 234 / .16); }
+/* Repère à gauche : une ancre orange (oui) ou une croix grise (non) */
+.pourqui__liste li::before {
+  content: ""; width: 18px; height: 18px; margin-top: 3px;
+  background: var(--signal);
+  --ancre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='5' r='2.2'/%3E%3Cpath d='M12 7.2V21M8 11h8M4.5 14c0 4 3.3 7 7.5 7s7.5-3 7.5-7'/%3E%3C/svg%3E");
+  -webkit-mask: var(--ancre) center / contain no-repeat; mask: var(--ancre) center / contain no-repeat;
+}
+.pourqui__col--non .pourqui__liste li::before {
+  width: 12px; height: 12px; margin: 6px 3px 0;
+  -webkit-mask: none; mask: none;
+  color: rgb(245 242 234 / .45);
+  background:
+    linear-gradient(45deg, transparent calc(50% - .7px), currentColor calc(50% - .7px), currentColor calc(50% + .7px), transparent calc(50% + .7px)),
+    linear-gradient(-45deg, transparent calc(50% - .7px), currentColor calc(50% - .7px), currentColor calc(50% + .7px), transparent calc(50% + .7px));
+}
+
+@media (max-width: 860px) {
+  .pourqui__cols { grid-template-columns: 1fr; }
+}
+
+/* ---------- 9. Phare (transition) ----------
+   « Pour qui » se fige quand son bas touche le bas de l'écran (--pq-h = sa hauteur, posée par main.js).
+   Le bloc .phare le recouvre alors : éclat du phare, puis section Fonctionnement. */
+.phare__voile, .phare-fixe, .phare__flash { display: none; }
+
+/* Le phare : fixe à droite de l'écran. main.js le découpe avec le sillage (il n'est donc
+   pas visible sur le hero), puis le fait disparaître dans l'éclat. */
+.js .phare-fixe {
+  display: block; position: fixed; inset: 0; z-index: 40;
+  pointer-events: none;
+  clip-path: polygon(0 0, 0 0, 0 0);
+}
+.js .phare__flash { display: block; position: fixed; inset: 0; z-index: 41; width: 100%; height: 100%; pointer-events: none; }
+/* Place réservée au phare à droite des sections qu'il accompagne */
+.resultats__inner, .pourqui__inner { padding-right: clamp(110px, 10vw, 160px); }
+@media (max-width: 860px) {
+  .js .phare__tour { height: 24%; right: 6px; }
+  .resultats__inner, .pourqui__inner { padding-right: 52px; }
+}
+
+.js .escale { position: relative; }
+.js .pourqui { position: sticky; top: calc(100vh - var(--pq-h, 100vh)); top: calc(100svh - var(--pq-h, 100svh)); z-index: 0; }
+.js .phare {
+  position: relative; z-index: 1;
+  margin-top: -100vh; margin-top: -100svh;
+  height: calc(100vh + 430vh); height: calc(100svh + 430vh);   /* 130vh d'éclat + 300vh d'étapes */
+}
+.js .phare__stage {
+  position: sticky; top: 0;
+  height: 100vh; height: 100svh;
+  overflow: hidden; pointer-events: none;
+}
+.js .phare__stage.is-on { pointer-events: auto; }
+.phare__anchor { position: absolute; left: 0; top: 130vh; }   /* fin de l'éclat = début des étapes */
+
+.js .phare__voile { display: block; position: absolute; inset: 0; z-index: 1; background: #06141d; opacity: 0; }
+.js .fonct { position: absolute; inset: 0; z-index: 2; opacity: 0; }
+.phare__tour {
+  position: absolute; right: clamp(8px, 1.2vw, 20px); bottom: 0; height: 52%;
+  fill: var(--sea); stroke: var(--foam); stroke-width: 1.2; stroke-linejoin: round; stroke-linecap: round;
+  overflow: visible;
+}
+.phare__tour * { vector-effect: non-scaling-stroke; }
+.phare__bande { fill: rgb(245 242 234 / .9); stroke: none; }
+.phare__trait { fill: none; }
+.phare__feu { fill: var(--flash); stroke: none; }
+
+/* ---------- 10. Fonctionnement ---------- */
+.fonct {
+  --ligne: 42%;      /* position horizontale de la ligne directrice */
+  --ecart: 56px;     /* distance ligne -> système */
+  --py: 50%;         /* hauteur du point (mêmes valeurs dans main.js) */
+  position: relative; min-height: 100vh; min-height: 100svh;
+  background: var(--paper); color: var(--ink);
+  overflow: hidden;
+}
+.fonct__tete { position: absolute; left: var(--pad); top: calc(var(--header-h) + 28px); max-width: calc(var(--ligne) - var(--pad) - 48px); }
+.fonct h2 {
+  margin-top: 18px;
+  font-family: var(--font-title); font-weight: 400;
+  font-size: clamp(28px, 3.2vw, 46px); line-height: 1.04; letter-spacing: -.01em;
+}
+
+/* Ligne directrice : le bateau descend du haut de l'écran puis se cale au niveau --py.
+   --by = sa hauteur actuelle, posée par main.js. Sillage bleu clair derrière, pointillés devant. */
+.cap { --by: var(--py); position: absolute; top: 0; bottom: 0; left: var(--ligne); width: 0; }
+.cap__bateau {
+  position: absolute; left: -9px; top: calc(var(--by) - 23px);
+  width: 18px; height: 46px;
+  transform: rotate(180deg);          /* proue vers le bas */
+  overflow: visible;
+}
+.cap__sillage {
+  position: absolute; left: -22px; width: 44px;
+  top: var(--header-h); height: calc(var(--by) - var(--header-h) - 19px);
+}
+.cap__sillage path { vector-effect: non-scaling-stroke; }
+.cap__remous { stroke-dasharray: 2 9; stroke-dashoffset: calc(var(--g, 0) * 330px); }
+.cap__route {
+  position: absolute; left: -.75px; width: 1.5px;
+  top: calc(var(--by) + 32px); bottom: 0;
+  background: repeating-linear-gradient(to bottom, rgb(11 34 49 / .6) 0 5px, transparent 5px 13px);
+  background-position-y: calc(var(--g, 0) * -390px);
+  -webkit-mask: linear-gradient(#000 70%, transparent);
+  mask: linear-gradient(#000 70%, transparent);
+}
+
+/* Nom de l'étape, à gauche de la ligne */
+.fonct__etape {
+  position: absolute; top: var(--py); right: calc(100% - var(--ligne) + 44px);
+  width: min(440px, calc(var(--ligne) - var(--pad) - 44px));
+  transform: translateY(-50%);
+  text-align: right;
+}
+.fonct__niveau {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--signal);
+}
+.fonct__phrases { margin: 14px 0 0; padding: 0; list-style: none; display: grid; }
+.fonct__phrases li {
+  font-family: var(--font-title); font-size: clamp(26px, 2.9vw, 44px); line-height: 1.08;
+  text-wrap: balance;
+}
+.js .fonct__phrases li {
+  grid-area: 1 / 1;
+  opacity: 0; transform: translateY(14px);
+  transition: opacity .35s, transform .45s;
+}
+.js .fonct__phrases li.is-active { opacity: 1; transform: none; }
+
+/* Le système qui se remplit */
+.fonct__systeme { position: absolute; left: calc(var(--ligne) + var(--ecart)); top: var(--gtop, 30%); }
+.fonct__grille {
+  display: grid; grid-template-columns: repeat(var(--cols, 8), var(--cell, 60px)); gap: var(--gap, 12px);
+}
+.case {
+  width: var(--cell, 60px); height: var(--cell, 60px);
+  display: grid; place-items: center;
+  border: 1px dashed rgb(11 34 49 / .2); border-radius: 6px;
+  transition: background .3s, border-color .3s;
+}
+.case svg {
+  width: 46%; height: 46%;
+  fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round;
+  opacity: 0; transform: scale(.4);
+  transition: opacity .3s, transform .45s cubic-bezier(.3, 1.6, .5, 1);
+}
+.case.on { border-style: solid; border-color: rgb(11 34 49 / .5); background: #fbf9f3; }
+.case.on svg { opacity: 1; transform: none; }
+.case.on[data-type="person"] { color: var(--signal); border-color: var(--signal); }
+.case.on[data-type="ia"] { background: var(--ink); border-color: var(--ink); color: var(--flash); }
+
+/* Le flou et la pâleur de chaque case sont posés par main.js selon sa distance au point. */
+
+.fonct__compteurs {
+  margin-top: 26px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px 22px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft);
+}
+.fonct__compteurs li { display: flex; align-items: center; gap: 7px; }
+.fonct__compteurs svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.fonct__compteurs b { min-width: 2ch; font-weight: 500; color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; }
+
+/* ---------- 11. Rendez-vous ---------- */
+.rdv {
+  position: relative; z-index: 2;
+  padding: clamp(72px, 12vh, 140px) var(--pad) clamp(72px, 12vh, 140px);
+  background: var(--sea); color: var(--foam);
+}
+.rdv__inner {
+  max-width: 1240px; margin: 0 auto;
+  display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+  gap: clamp(28px, 5vw, 72px); align-items: center;
+}
+
+.rdv__portrait { position: relative; margin: 0; border-radius: 6px; overflow: hidden; aspect-ratio: 4 / 5; background: #06141d; }
+.rdv__portrait img { display: block; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); }
+.rdv__portrait figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 64px 24px 22px;
+  background: linear-gradient(transparent, rgb(6 20 29 / .85));
+  display: flex; flex-direction: column; gap: 2px;
+}
+.rdv__portrait strong { font-family: var(--font-title); font-weight: 400; font-size: 28px; line-height: 1.1; }
+.rdv__portrait span { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
+
+.rdv h2 {
+  margin-top: 22px;
+  font-family: var(--font-title); font-weight: 400;
+  font-size: clamp(34px, 4.4vw, 62px); line-height: 1.02; letter-spacing: -.01em;
+  text-wrap: balance;
+}
+.rdv__lead { margin-top: 20px; max-width: 54ch; font-size: clamp(16px, 1.25vw, 18px); opacity: .82; }
+.rdv__points {
+  margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px 22px;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+}
+.rdv__points li { display: flex; align-items: center; gap: 8px; }
+.rdv__points li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--signal); }
+
+/* Agenda */
+.agenda {
+  margin-top: 32px; padding: clamp(18px, 2.4vw, 30px);
+  background: var(--paper); color: var(--ink); border-radius: 8px;
+}
+.agenda__tete {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 20px;
+  padding-bottom: 16px; border-bottom: 1px solid rgb(11 34 49 / .14);
+}
+.agenda__titre { font-family: var(--font-title); font-size: 26px; line-height: 1.1; }
+.agenda__meta { display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+
+.agenda__choix { margin-top: 20px; display: grid; grid-template-columns: minmax(0, 1fr) 190px; gap: 28px; }
+.agenda__choix[hidden], .agenda__form[hidden], .agenda__ok[hidden] { display: none; }
+
+.agenda__mois { display: flex; align-items: center; justify-content: space-between; }
+.agenda__mois p { font-weight: 600; font-size: 15px; text-transform: capitalize; }
+.agenda__nav {
+  width: 36px; height: 36px; border: 0; border-radius: 50%;
+  background: none; color: var(--ink); font: inherit; font-size: 16px; cursor: pointer;
+}
+.agenda__nav:hover:not(:disabled) { background: rgb(11 34 49 / .08); }
+.agenda__nav:disabled { opacity: .25; cursor: default; }
+
+.agenda__semaine, .agenda__jours { display: grid; grid-template-columns: repeat(7, 1fr); justify-items: center; }
+.agenda__semaine { margin-top: 10px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.agenda__jours { margin-top: 6px; row-gap: 4px; }
+.agenda__jours button {
+  width: 40px; height: 40px; max-width: 100%; border: 0; border-radius: 50%;
+  background: none; color: var(--ink); font: inherit; font-size: 14px;
+}
+.agenda__jours button:disabled { opacity: .3; }
+.agenda__jours button:not(:disabled) { background: rgb(11 34 49 / .08); font-weight: 600; cursor: pointer; }
+.agenda__jours button:not(:disabled):hover { background: rgb(11 34 49 / .18); }
+.agenda__jours button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+.agenda__jour { font-weight: 600; font-size: 15px; line-height: 36px; text-transform: capitalize; }
+.agenda__liste { margin-top: 10px; display: grid; gap: 8px; max-height: 268px; overflow-y: auto; padding-right: 4px; }
+.agenda__liste button {
+  padding: 11px; border: 1px solid rgb(11 34 49 / .45); border-radius: 6px;
+  background: none; color: var(--ink); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.agenda__liste button:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+.agenda__form { margin-top: 20px; display: grid; gap: 14px; max-width: 460px; }
+.agenda__recap { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-weight: 600; }
+.agenda__recap span::first-letter { text-transform: uppercase; }
+.agenda__modifier { padding: 0; border: 0; background: none; color: var(--ink-soft); font: inherit; font-size: 14px; text-decoration: underline; cursor: pointer; }
+.agenda__form label { display: block; font-size: 14px; font-weight: 500; }
+.agenda__form small { font-size: inherit; font-weight: 400; color: var(--ink-soft); }
+.agenda__form input {
+  display: block; width: 100%; margin-top: 6px;
+  padding: 12px 14px; border: 1px solid rgb(11 34 49 / .35); border-radius: 6px;
+  background: #fbf9f3; color: var(--ink); font: inherit; font-size: 16px;
+}
+.agenda__form input:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
+.btn--signal { background: var(--signal); color: #fff; border: 0; font-family: inherit; cursor: pointer; justify-self: start; }
+.btn--signal:hover { background: var(--ink); }
+
+.agenda__ok { margin-top: 20px; padding: 12px 0 8px; }
+.agenda__ok:focus { outline: none; }
+.agenda__ok-titre { font-family: var(--font-title); font-size: 40px; line-height: 1.05; color: var(--signal); }
+.agenda__ok-texte { margin-top: 10px; max-width: 46ch; }
+
+@media (max-width: 860px) {
+  .rdv__inner { grid-template-columns: 1fr; }
+  .rdv__portrait { aspect-ratio: 1 / 1; max-width: 420px; }
+  .agenda__choix { grid-template-columns: 1fr; gap: 20px; }
+  .agenda__liste { grid-template-columns: repeat(3, 1fr); max-height: none; }
+  .btn--signal { justify-self: stretch; }
+}
+
+/* Menu en encre quand la section claire est affichée */
+.header--ink .header__layer--light { opacity: 0; pointer-events: none; }
+.header__layer--light { transition: opacity .2s; }
+
+@media (max-width: 860px) {
+  .fonct { --ligne: 28px; --ecart: 22px; --py: 60%; }
+  .fonct__tete { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .fonct__etape {
+    top: 0; left: 0; right: 0; z-index: 2;
+    padding: calc(var(--header-h) + 16px) 20px 36px calc(var(--ligne) + var(--ecart));
+    width: auto; transform: none; text-align: left;
+    background: linear-gradient(var(--paper) 78%, rgb(245 242 234 / 0));
+  }
+  .fonct__phrases { margin-top: 10px; }
+  .fonct__compteurs { margin-top: 14px; justify-content: flex-start; gap: 6px 16px; font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hero__cap span { animation: none; }
+}
