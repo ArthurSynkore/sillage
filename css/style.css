@@ -249,54 +249,35 @@ body.menu-open { overflow: hidden; }
   .hero__actions { margin-top: 20px; }
 
   .hero__bas { display: none; }   /* les logos sont déjà dans les tuiles */
-  .ias { display: block; margin-top: 30px; max-width: 380px; }
-  .ias__tuiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .ias { display: block; margin-top: 34px; }
+  /* Petites cartes blanches avec le logo seul, qui se chevauchent comme une main de cartes */
+  .ias__tuiles { display: flex; margin: 0; padding: 0 0 0 4px; list-style: none; }
   .tuile {
-    aspect-ratio: 1; border-radius: 14px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
-    font-size: 10.5px; font-weight: 600; color: var(--ink);
+    width: 46px; height: 46px; flex: none; border-radius: 12px;
+    display: grid; place-items: center;
+    background: #fff; color: var(--ink);
     border: 1px solid rgb(11 34 49 / .08);
-    animation: tuile .5s cubic-bezier(.2, .8, .2, 1) both;
-    animation-delay: calc(.25s + var(--k) * .09s);
+    box-shadow: 0 4px 12px rgb(11 34 49 / .1);
+    margin-left: -10px;
+    transform: rotate(var(--rot));
+    animation: carte .55s cubic-bezier(.2, .8, .2, 1) both;
+    animation-delay: calc(.3s + var(--k) * .1s);
   }
-  .tuile__logo { width: 24px; height: 24px; }
-  /* Couleurs tertiaires, très douces, une par IA */
-  .tuile--gpt { background: #e3eee8; }
-  .tuile--claude { background: #f4e5d6; }
-  .tuile--gemini { background: #e2e9f4; }
-  .tuile--perplexity { background: #e2eef0; }
-
-  .ias__fleches { display: block; width: 100%; height: 52px; color: rgb(11 34 49 / .45); overflow: visible; }
-  .ias__fleches path { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-  .ias__fleches > path { animation: fleche .7s ease both; animation-delay: calc(.7s + var(--k) * .08s); }
-
-  .ias__cible {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    margin: 4px auto 0; padding: 11px 16px; border-radius: 999px;
-    background: #fff; border: 1.5px solid var(--signal);
-    font-size: 14px; font-weight: 600; color: var(--ink);
-    box-shadow: 0 6px 18px rgb(11 34 49 / .08);
-    animation: tuile .5s cubic-bezier(.2, .8, .2, 1) 1.15s both;
-  }
-  .ias__ok {
-    display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
-    background: var(--signal); color: #fff; font-size: 12px; line-height: 1;
-  }
+  .tuile:first-child { margin-left: 0; }
+  .tuile--gpt { --rot: -7deg; z-index: 1; }
+  .tuile--claude { --rot: -2deg; z-index: 2; }
+  .tuile--gemini { --rot: 3deg; z-index: 3; }
+  .tuile--perplexity { --rot: 8deg; z-index: 4; }
+  .tuile__logo { width: 22px; height: 22px; }
 }
-/* Petits téléphones : visuel plus compact pour tout tenir dans l'écran */
+/* Petits téléphones : un peu plus compact pour tout tenir dans l'écran */
 @media (max-width: 860px) and (max-height: 760px) {
   .hero h1 { font-size: 38px; }
   .hero__actions { margin-top: 16px; }
-  .ias { margin-top: 18px; }
-  .ias__tuiles { gap: 8px; }
-  .tuile { font-size: 9.5px; border-radius: 12px; gap: 4px; }
-  .tuile__logo { width: 20px; height: 20px; }
-  .ias__fleches { height: 34px; }
-  .ias__cible { padding: 9px 14px; font-size: 13px; }
+  .ias { margin-top: 22px; }
 }
-@keyframes tuile { from { opacity: 0; transform: translateY(10px) scale(.94); } to { opacity: 1; transform: none; } }
-@keyframes fleche { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .tuile, .ias__fleches > path, .ias__cible { animation: none; } }
+@keyframes carte { from { opacity: 0; transform: translateX(-14px) rotate(0deg); } to { opacity: 1; transform: rotate(var(--rot)); } }
+@media (prefers-reduced-motion: reduce) { .tuile { animation: none; } }
 @media (max-height: 600px) {
   .hero__bas { display: none; }
   .hero h1 { margin-top: 16px; font-size: clamp(36px, 6vw, 64px); }
