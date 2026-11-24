@@ -35,6 +35,71 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
   window.matchMedia('(min-width: 861px)').addEventListener('change', function (e) { if (e.matches) setMenu(false); });
 
+  // ---------- 1 bis. Fond aquatique du hero ----------
+  // Une surface d'eau très claire : immobile au repos, de petites ondes naissent sous la souris
+  // et s'éteignent d'elles-mêmes. La simulation tourne seulement tant qu'il reste des ondes.
+  (function () {
+    var hero = document.querySelector('.hero');
+    var cv = hero && hero.querySelector('.hero__eau');
+    if (!cv || reduceMotion) return;
+    var cx = cv.getContext('2d');
+    var CELL = 6;                         // taille d'une maille, en pixels d'écran
+    var cols, rows, a, b, img, running = false, last = null;
+
+    function size() {
+      cols = Math.max(2, Math.ceil(hero.clientWidth / CELL));
+      rows = Math.max(2, Math.ceil(hero.clientHeight / CELL));
+      cv.width = cols; cv.height = rows;
+      a = new Float32Array(cols * rows); b = new Float32Array(cols * rows);
+      img = cx.createImageData(cols, rows);
+    }
+    function drop(x, y, force) {
+      var c = Math.round(x / CELL), r = Math.round(y / CELL);
+      for (var dy = -2; dy <= 2; dy++) for (var dx = -2; dx <= 2; dx++) {
+        var cc = c + dx, rr = r + dy;
+        if (cc > 0 && rr > 0 && cc < cols - 1 && rr < rows - 1) a[rr * cols + cc] += force * (1 - (dx * dx + dy * dy) / 9);
+      }
+      if (!running) { running = true; requestAnimationFrame(step); }
+    }
+    function step() {
+      var energy = 0, d = img.data;
+      for (var r = 1; r < rows - 1; r++) {
+        for (var c = 1; c < cols - 1; c++) {
+          var i = r * cols + c;
+          var v = (a[i - 1] + a[i + 1] + a[i - cols] + a[i + cols]) / 2 - b[i];
+          v *= 0.965;                     // amortissement : les ondes meurent vite
+          b[i] = v;
+          energy += v < 0 ? -v : v;
+        }
+      }
+      var t = a; a = b; b = t;
+      // Rendu : la pente de l'eau éclaircit ou bleuit très légèrement le fond
+      for (var k = 0, n = cols * rows; k < n; k++) {
+        var s = (a[k + 1] || 0) - (a[k - 1] || 0) + (a[k + cols] || 0) - (a[k - cols] || 0);
+        var p = k * 4;
+        if (s > 0) { d[p] = 255; d[p + 1] = 255; d[p + 2] = 255; d[p + 3] = Math.min(70, s * 9); }
+        else { d[p] = 70; d[p + 1] = 125; d[p + 2] = 150; d[p + 3] = Math.min(45, -s * 6); }
+      }
+      cx.putImageData(img, 0, 0);
+      if (energy > 0.5) requestAnimationFrame(step);
+      else { running = false; cx.clearRect(0, 0, cols, rows); a.fill(0); b.fill(0); }
+    }
+    hero.addEventListener('pointermove', function (e) {
+      var r = hero.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      // Une goutte à chaque petit déplacement, proportionnelle à la vitesse (plafonnée)
+      if (last) {
+        var dist = Math.hypot(x - last.x, y - last.y);
+        if (dist < 10) return;
+        drop(x, y, Math.min(14, 4 + dist * 0.12));
+      }
+      last = { x: x, y: y };
+    }, { passive: true });
+    hero.addEventListener('pointerleave', function () { last = null; });
+    size();
+    window.addEventListener('resize', size);
+  })();
+
   // ---------- 2. Traversée ----------
   var voyage = document.querySelector('.voyage');
   var stage = voyage.querySelector('.voyage__stage');
