@@ -243,9 +243,34 @@ body.menu-open { overflow: hidden; }
 .moteur__logo { width: 17px; height: 17px; flex: none; opacity: .9; }
 
 
-.lead-court, .ias { display: none; }
+.lead-court { display: none; }
 
-/* Téléphone : moins de texte, pas de boussole, un visuel des IA à la place */
+/* Les 4 IA : petites cartes blanches avec le logo seul, qui se chevauchent comme une main de cartes
+   (ordi et téléphone). Elles remplacent l'ancienne liste « Visible sur ». */
+.hero__bas { display: none; }
+.ias { display: flex; align-items: center; gap: 18px; margin-top: 40px; }
+.ias__tuiles { display: flex; margin: 0; padding: 0 0 0 4px; list-style: none; }
+.tuile {
+  width: 52px; height: 52px; flex: none; border-radius: 13px;
+  display: grid; place-items: center;
+  background: #fff; color: var(--ink);
+  border: 1px solid rgb(11 34 49 / .08);
+  box-shadow: 0 4px 12px rgb(11 34 49 / .1);
+  margin-left: -11px;
+  transform: rotate(var(--rot));
+  animation: carte .55s cubic-bezier(.2, .8, .2, 1) both;
+  animation-delay: calc(.3s + var(--k) * .1s);
+  transition: transform .25s ease;
+}
+.tuile:first-child { margin-left: 0; }
+.tuile--gpt { --rot: -7deg; z-index: 1; }
+.tuile--claude { --rot: -2deg; z-index: 2; }
+.tuile--gemini { --rot: 3deg; z-index: 3; }
+.tuile--perplexity { --rot: 8deg; z-index: 4; }
+.tuile__logo { width: 24px; height: 24px; }
+.ias__texte { font-size: 13.5px; line-height: 1.4; color: var(--ink-soft); max-width: 22ch; }
+
+/* Téléphone : moins de texte, pas de boussole */
 @media (max-width: 860px) {
   .compass { display: none; }
   .hero { padding-bottom: 28px; justify-content: center; }
@@ -253,27 +278,9 @@ body.menu-open { overflow: hidden; }
   .lead-court { display: inline; }
   .hero__lead { font-size: 17px; margin-top: 14px; }
   .hero__actions { margin-top: 20px; }
-
-  .hero__bas { display: none; }   /* les logos sont déjà dans les tuiles */
-  .ias { display: block; margin-top: 34px; }
-  /* Petites cartes blanches avec le logo seul, qui se chevauchent comme une main de cartes */
-  .ias__tuiles { display: flex; margin: 0; padding: 0 0 0 4px; list-style: none; }
-  .tuile {
-    width: 46px; height: 46px; flex: none; border-radius: 12px;
-    display: grid; place-items: center;
-    background: #fff; color: var(--ink);
-    border: 1px solid rgb(11 34 49 / .08);
-    box-shadow: 0 4px 12px rgb(11 34 49 / .1);
-    margin-left: -10px;
-    transform: rotate(var(--rot));
-    animation: carte .55s cubic-bezier(.2, .8, .2, 1) both;
-    animation-delay: calc(.3s + var(--k) * .1s);
-  }
-  .tuile:first-child { margin-left: 0; }
-  .tuile--gpt { --rot: -7deg; z-index: 1; }
-  .tuile--claude { --rot: -2deg; z-index: 2; }
-  .tuile--gemini { --rot: 3deg; z-index: 3; }
-  .tuile--perplexity { --rot: 8deg; z-index: 4; }
+  .ias { margin-top: 34px; }
+  .ias__texte { display: none; }   /* sur téléphone, les logos suffisent */
+  .tuile { width: 46px; height: 46px; border-radius: 12px; margin-left: -10px; }
   .tuile__logo { width: 22px; height: 22px; }
 }
 /* Petits téléphones : un peu plus compact pour tout tenir dans l'écran */
@@ -378,14 +385,14 @@ body.menu-open { overflow: hidden; }
   --p: 1;
   position: relative; display: flex; flex-direction: column;
   padding: clamp(14px, 2.2vh, 22px) clamp(16px, 1.6vw, 24px);
-  border-radius: 14px;
-  background: rgb(245 242 234 / .045);
-  border: 1px solid rgb(245 242 234 / .1);
+  border-radius: 22px;
+  background: rgb(245 242 234 / .075);
+  border: 1px solid transparent;
   opacity: calc(var(--p) * 3);
   transform: translateY(calc((1 - min(1, var(--p) * 3)) * 18px));
   transition: border-color .25s, background-color .25s;
 }
-.kpi:hover { border-color: rgb(245 242 234 / .22); background: rgb(245 242 234 / .065); }
+.kpi:hover { border-color: rgb(245 242 234 / .16); background: rgb(245 242 234 / .09); }
 
 .kpi__haut { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
 .kpi__titre { font-size: 14px; font-weight: 500; color: rgb(245 242 234 / .72); }
