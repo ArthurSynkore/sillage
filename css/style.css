@@ -4,7 +4,7 @@
    2. Base             6. Traversée (bateau + sillage)
    3. Boutons          7. Résultats
    4. Navigation       8. Pour qui
-   9. Mouette (transition)   10. Fonctionnement   11. Rendez-vous
+   9. Phare (transition)   10. Fonctionnement   11. Rendez-vous
    ========================================================== */
 
 /* ---------- 1. Variables ---------- */
@@ -546,10 +546,10 @@ body.menu-open { overflow: hidden; }
 /* Les cadres apparaissent en fondu, un peu avant leur contenu */
 .js .pourqui__col { opacity: calc(.2 + var(--r, 1) * .8); }
 
-/* ---------- 9. Mouette (transition) ----------
-   « Pour qui » se fige au centre de l'écran (--pq-top, posé par main.js), puis le bloc .phare le recouvre :
-   la mouette descend du haut de l'écran et la section blanche se déroule derrière elle. */
-.phare-fixe, .mouette { display: none; }
+/* ---------- 9. Phare (transition) ----------
+   « Pour qui » se fige quand son bas touche le bas de l'écran (--pq-h = sa hauteur, posée par main.js).
+   Le bloc .phare le recouvre alors : éclat du phare, puis section Fonctionnement. */
+.phare__voile, .phare-fixe, .phare__flash { display: none; }
 
 /* Le phare : fixe à droite de l'écran. main.js le découpe avec le sillage (il n'est donc
    pas visible sur le hero), puis le fait disparaître dans l'éclat. */
@@ -558,7 +558,7 @@ body.menu-open { overflow: hidden; }
   pointer-events: none;
   clip-path: polygon(0 0, 0 0, 0 0);
 }
-.phare-fixe__in { position: absolute; inset: 0; }   /* recouvert par la section blanche (clip posé par main.js) */
+.js .phare__flash { display: block; position: fixed; inset: 0; z-index: 41; width: 100%; height: 100%; pointer-events: none; }
 /* Place réservée au phare à droite des sections qu'il accompagne */
 .resultats__inner, .pourqui__inner { padding-right: clamp(110px, 10vw, 160px); }
 @media (max-width: 860px) {
@@ -574,7 +574,7 @@ body.menu-open { overflow: hidden; }
 .js .phare {
   position: relative; z-index: 1;
   margin-top: -100vh; margin-top: -100svh;
-  height: calc(100vh + 420vh); height: calc(100svh + 420vh);   /* 120vh d'arrivée de la mouette + 300vh d'étapes */
+  height: calc(100vh + 430vh); height: calc(100svh + 430vh);   /* 130vh d'éclat + 300vh d'étapes */
 }
 .js .phare__stage {
   position: sticky; top: 0;
@@ -582,35 +582,10 @@ body.menu-open { overflow: hidden; }
   overflow: hidden; pointer-events: none;
 }
 .js .phare__stage.is-on { pointer-events: auto; }
-.phare__anchor { position: absolute; left: 0; top: 120vh; }   /* fin de l'arrivée = début des étapes */
+.phare__anchor { position: absolute; left: 0; top: 130vh; }   /* fin de l'éclat = début des étapes */
 
-/* Section blanche : déroulée de haut en bas derrière la mouette (clip-path posé par main.js) */
-.js .fonct { position: absolute; inset: 0; z-index: 2; clip-path: inset(0 0 100% 0); }
-/* Son contenu n'apparaît qu'une fois l'écran blanc (--c, 0 → 1) */
-.js .fonct__tete, .js .fonct__etape, .js .fonct__systeme, .js .cap { opacity: var(--c, 0); }
-
-/* La mouette : noir et blanc, 3 images de battement d'ailes en boucle */
-.js .mouette {
-  display: block; position: absolute; left: 0; top: 0; z-index: 3;
-  width: 64px; height: 47px; margin: -23px 0 0 -32px;
-  overflow: visible; pointer-events: none; will-change: transform;
-  transform: translate(-200px, -200px);
-}
-/* Ailes blanches cernées de noir, bouts noirs : lisible sur le bleu comme sur le blanc */
-.mouette__aile { fill: #fff; stroke: #0b0b0b; stroke-width: 1.3; stroke-linejoin: round; }
-.mouette__bout { fill: #0b0b0b; }
-.mouette__corps { fill: #fff; stroke: #0b0b0b; stroke-width: 1.3; stroke-linejoin: round; }
-.mouette__bec { fill: #0b0b0b; }
-.mouette__img { opacity: 0; animation: battement .42s steps(1, end) infinite; }
-.mouette__img--1 { animation-delay: 0s; }
-.mouette__img--2 { animation-delay: -.28s; }
-.mouette__img--3 { animation-delay: -.14s; }
-@keyframes battement { 0% { opacity: 1; } 33.33% { opacity: 0; } 100% { opacity: 0; } }
-@media (max-width: 860px) { .js .mouette { width: 40px; height: 30px; margin: -15px 0 0 -20px; } }
-@media (prefers-reduced-motion: reduce) {
-  .mouette__img { animation: none; }
-  .mouette__img--1 { opacity: 1; }
-}
+.js .phare__voile { display: block; position: absolute; inset: 0; z-index: 1; background: #06141d; opacity: 0; }
+.js .fonct { position: absolute; inset: 0; z-index: 2; opacity: 0; }
 .phare__tour {
   position: absolute; right: clamp(8px, 1.2vw, 20px); bottom: 0; height: 52%;
   fill: var(--sea); stroke: var(--foam); stroke-width: 1.2; stroke-linejoin: round; stroke-linecap: round;
@@ -623,7 +598,7 @@ body.menu-open { overflow: hidden; }
 
 /* ---------- 10. Fonctionnement ---------- */
 .fonct {
-  --ligne: 50%;      /* position horizontale de la ligne directrice (pile au centre) */
+  --ligne: 42%;      /* position horizontale de la ligne directrice */
   --ecart: 56px;     /* distance ligne -> système */
   --py: 50%;         /* hauteur du point (mêmes valeurs dans main.js) */
   position: relative; min-height: 100vh; min-height: 100svh;
@@ -637,14 +612,21 @@ body.menu-open { overflow: hidden; }
   font-size: clamp(28px, 3.2vw, 46px); line-height: 1.04; letter-spacing: -.01em;
 }
 
-/* Ligne directrice : la mouette est posée à la hauteur --by (posée par main.js).
-   Au-dessus, le trajet qu'elle vient de faire ; en dessous, la route en pointillés. */
+/* Ligne directrice : le bateau descend du haut de l'écran puis se cale au niveau --py.
+   --by = sa hauteur actuelle, posée par main.js. Sillage bleu clair derrière, pointillés devant. */
 .cap { --by: var(--py); position: absolute; top: 0; bottom: 0; left: var(--ligne); width: 0; }
-.cap__trace {
-  position: absolute; left: -.5px; width: 1px;
-  top: var(--header-h); height: calc(var(--by) - var(--header-h) - 30px);
-  background: linear-gradient(to top, rgb(11 34 49 / .45), rgb(11 34 49 / 0));
+.cap__bateau {
+  position: absolute; left: -9px; top: calc(var(--by) - 23px);
+  width: 18px; height: 46px;
+  transform: rotate(180deg);          /* proue vers le bas */
+  overflow: visible;
 }
+.cap__sillage {
+  position: absolute; left: -22px; width: 44px;
+  top: var(--header-h); height: calc(var(--by) - var(--header-h) - 19px);
+}
+.cap__sillage path { vector-effect: non-scaling-stroke; }
+.cap__remous { stroke-dasharray: 2 9; stroke-dashoffset: calc(var(--g, 0) * 330px); }
 .cap__route {
   position: absolute; left: -.75px; width: 1.5px;
   top: calc(var(--by) + 32px); bottom: 0;
