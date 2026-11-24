@@ -584,16 +584,21 @@
   // La section se fige au centre de l'écran (ou en bas si elle est plus haute que l'écran)
   // pendant PAUSE × hauteur d'écran, avant l'arrivée de la mouette. Pendant ce temps, titres et
   // lignes se posent un par un. L'animation suit le défilement : elle s'inverse si on remonte.
-  var PAUSE = 1.4;
+  var PAUSE = 0.9;
   var pause = escale.querySelector('.escale__pause');
   var assis = [];
   (function () {
     var cols = pourqui.querySelectorAll('.pourqui__col');
-    var liste = [{ el: pourqui.querySelector('h2'), delai: 0 }];
+    var liste = [];
     cols.forEach(function (col, c) {
-      liste.push({ el: col, delai: c * 40, cadre: true });
-      liste.push({ el: col.querySelector('h3'), delai: c * 40 + 20 });
-      col.querySelectorAll('li').forEach(function (li) { liste.push({ el: li, delai: c * 40 + 30 }); });
+      col.querySelectorAll('li').forEach(function (li) {
+        // La phrase est placée dans un <span> pour s'animer après le symbole
+        var span = document.createElement('span');
+        span.className = 'pq__txt';
+        while (li.firstChild) span.appendChild(li.firstChild);
+        li.appendChild(span);
+        liste.push({ el: li, delai: c * 40 });
+      });
     });
     assis = liste;
   })();

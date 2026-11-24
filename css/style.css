@@ -527,24 +527,18 @@ body.menu-open { overflow: hidden; }
 .js .pourqui__liste { margin-top: clamp(10px, 1.6vh, 24px); }
 .js .pourqui__liste li { padding: clamp(9px, 1.55vh, 16px) 0; }
 
-/* Les textes « s'assoient » : ils descendent de quelques pixels et se posent.
+/* Apparition des lignes : les cadres, titres et séparateurs sont déjà là.
+   Dans chaque ligne, le symbole (ancre ou croix) apparaît d'abord, puis la phrase glisse à sa droite.
    --r (0 → 1) est donné par main.js selon le défilement. Sans JavaScript : tout est visible. */
-.js .pourqui h2, .js .pourqui h3, .js .pourqui__liste li {
-  opacity: var(--r, 1);
-  transform: translateY(calc((1 - var(--r, 1)) * -14px));
-  will-change: opacity, transform;
+.js .pourqui__liste li::before {
+  opacity: min(1, calc(var(--r, 1) * 2.2));
+  transform: scale(min(1, calc(.2 + var(--r, 1) * 1.6))) rotate(calc((1 - min(1, var(--r, 1) * 1.6)) * -40deg));
 }
-.js .pourqui__liste li { transform: translateY(calc((1 - var(--r, 1)) * -10px)); }
-/* Le trait de séparation se trace de gauche à droite */
-.js .pourqui__liste li { border-top-color: transparent; position: relative; }
-.js .pourqui__liste li::after {
-  content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px;
-  background: rgb(11 34 49 / .14);
-  transform: scaleX(var(--r, 1)); transform-origin: left;
+.js .pq__txt {
+  display: block;
+  opacity: max(0, min(1, calc((var(--r, 1) - .35) / .65)));
+  transform: translateX(calc((1 - max(0, min(1, calc((var(--r, 1) - .35) / .65)))) * -12px));
 }
-.js .pourqui__col--non .pourqui__liste li::after { background: rgb(245 242 234 / .16); }
-/* Les cadres apparaissent en fondu, un peu avant leur contenu */
-.js .pourqui__col { opacity: calc(.2 + var(--r, 1) * .8); }
 
 /* ---------- 9. Mouette (transition) ----------
    « Pour qui » se fige au centre de l'écran (--pq-top, posé par main.js), puis le bloc .phare le recouvre :
