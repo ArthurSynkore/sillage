@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SILLAGE · Soyez la réponse que donnent les IA</title>
   <meta name="description" content="SILLAGE, agence de Generative Engine Optimization : rendez votre marque visible et recommandée dans ChatGPT, Claude, Gemini et Perplexity.">
-  <script>document.documentElement.classList.add('js');</script>
+  <script>document.documentElement.classList.add('js');if(/[?&]version=agence\b/.test(location.search))document.documentElement.classList.add('v-agence');</script>
   <link rel="preload" href="fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/schibsted-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=mobile6">
+  <link rel="stylesheet" href="css/style.css?v=offres1">
 </head>
 <body>
 
@@ -38,7 +38,7 @@
         </ul>
       </nav>
 
-      <a class="btn btn--ghost header__cta" href="#audit">Audit GEO</a>
+      <a class="btn btn--ghost header__cta" href="#audit"><span class="v-saas-txt">Essai gratuit</span><span class="v-agence-txt">Audit GEO</span></a>
 
       <button class="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu">
         <span></span><span></span>
@@ -54,7 +54,7 @@
       <a href="#offres">Offres</a>
       <a href="#ressources">Ressources</a>
       <a href="#audit">Contact</a>
-      <a class="btn btn--primary" href="#audit">Demander un audit GEO</a>
+      <a class="btn btn--primary" href="#audit"><span class="v-saas-txt">Essayer 15 jours gratuits</span><span class="v-agence-txt">Demander un audit GEO</span></a>
     </nav>
   </div>
   <!-- ============ FIN BARRE DE NAVIGATION ============ -->
@@ -175,7 +175,7 @@
             <h1 id="hero-titre">Soyez <span class="surligne">la réponse<svg class="surligne__trait" viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path class="surligne__a" d="M4 15 C 70 7, 170 4, 296 9"/><path class="surligne__b" d="M40 21 C 110 15, 190 13, 284 16"/></svg></span> que donnent les&nbsp;IA.</h1>
             <p class="hero__lead"><span class="lead-long">Vos clients ne cherchent plus, ils demandent. SILLAGE positionne votre marque là où se forment désormais les réponses&nbsp;: ChatGPT, Claude, Gemini, Perplexity.</span><span class="lead-court">Vos clients demandent aux IA. Faites-vous citer.</span></p>
             <div class="hero__actions">
-              <a class="btn btn--primary" href="#audit">Demander un audit GEO</a>
+              <a class="btn btn--primary" href="#audit"><span class="v-saas-txt">Essayer 15 jours gratuits</span><span class="v-agence-txt">Demander un audit GEO</span></a>
               <a class="btn btn--link" href="#methode">Voir la méthode</a>
             </div>
             <!-- Téléphone uniquement : les 4 IA, comme des cartes qui se chevauchent -->
@@ -441,6 +441,91 @@
     <!-- MAQUETTE : l'agenda ci-dessous est une démonstration, il n'envoie et n'enregistre rien.
          À brancher sur un vrai outil (Calendly, Cal.com…) avant mise en ligne.
          PHOTO PROVISOIRE : img/dirigeant.jpg est une photo libre de droits, à remplacer par le portrait de Marc Signorel (carré, 1000×1000). -->
+
+    <!-- ============ OFFRES (version SaaS) ============ -->
+    <!-- Remplace la section Rendez-vous. La version « agence » (avec le rendez-vous) reste visible avec ?version=agence.
+         Les éléments suivis d'un « ? » sont des suggestions à valider. Le prix par article et le prix annuel sont calculés par main.js. -->
+    <section class="offres" id="offres" aria-labelledby="offres-titre">
+      <div class="offres__inner">
+        <div class="offres__tete">
+          <h2 id="offres-titre">Le bon rythme pour votre&nbsp;activité.</h2>
+          <p class="offres__lead">Un outil de suivi vous montre où vous êtes absent. SILLAGE comble le vide&nbsp;: il écrit, publie et mesure.</p>
+
+          <div class="periode" role="group" aria-label="Période de paiement">
+            <button type="button" class="periode__btn is-on" data-periode="mensuel" aria-pressed="true">Mensuel</button>
+            <button type="button" class="periode__btn" data-periode="annuel" aria-pressed="false">Annuel <span class="periode__gain">2 mois offerts</span></button>
+          </div>
+        </div>
+
+        <div class="plans" id="plans">
+          <article class="plan plan--essentiel" data-mensuel="149" data-articles="4">
+            
+            <h3 class="plan__nom">Essentiel</h3>
+            <p class="plan__pour">Pour tester sur vos questions clés.</p>
+            <p class="plan__prix"><span class="plan__montant">149</span><span class="plan__unite">€&nbsp;HT<br>/mois</span></p>
+            <p class="plan__detail"><b>4 articles</b> par mois · <span class="plan__parart"></span></p>
+            <a class="btn btn--ghost-clair plan__cta" href="https://sillage-effect.com/demarrer?formule=essentiel">Démarrer l'essai gratuit</a>
+            <ul class="plan__liste">
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span><b>4 articles</b> par mois, à votre ton</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span><b>20 questions</b> suivies chaque semaine</span><span class="sugg" title="Suggestion à valider">?</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span><b>2 concurrents</b> comparés</span><span class="sugg" title="Suggestion à valider">?</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span>Mesure sur ChatGPT, Claude, Gemini, Perplexity</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span>Tableau de bord + e-mail mensuel</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span>Mise en place : 290&nbsp;€</span><span class="sugg" title="Suggestion à valider">?</span></li>
+            </ul>
+          </article>
+          <article class="plan plan--croissance" data-mensuel="299" data-articles="10">
+            <p class="plan__badge">Recommandé</p>
+            <h3 class="plan__nom">Croissance</h3>
+            <p class="plan__pour">Pour devenir la réponse de votre marché.</p>
+            <p class="plan__prix"><span class="plan__montant">299</span><span class="plan__unite">€&nbsp;HT<br>/mois</span></p>
+            <p class="plan__detail"><b>10 articles</b> par mois · <span class="plan__parart"></span></p>
+            <a class="btn btn--signal plan__cta" href="https://sillage-effect.com/demarrer?formule=croissance">Démarrer l'essai gratuit</a>
+            <ul class="plan__liste">
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span><b>10 articles</b> par mois, à votre ton</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span><b>60 questions</b> suivies chaque semaine</span><span class="sugg" title="Suggestion à valider">?</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span><b>5 concurrents</b> comparés</span><span class="sugg" title="Suggestion à valider">?</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span>Articles relayés sur LinkedIn</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span>Maillage interne automatique</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span>Point visio chaque trimestre</span><span class="sugg" title="Suggestion à valider">?</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span>Mise en place : <s>880&nbsp;€</s> <b class="plan__offert">offerte</b></span></li>
+            </ul>
+          </article>
+          <article class="plan plan--performance" data-mensuel="690" data-articles="25">
+            
+            <h3 class="plan__nom">Performance</h3>
+            <p class="plan__pour">Pour dominer plusieurs sujets à la fois.</p>
+            <p class="plan__prix"><span class="plan__montant">690</span><span class="plan__unite">€&nbsp;HT<br>/mois</span></p>
+            <p class="plan__detail"><b>25 articles</b> par mois · <span class="plan__parart"></span></p>
+            <a class="btn btn--ghost-clair plan__cta" href="https://sillage-effect.com/demarrer?formule=performance">Démarrer l'essai gratuit</a>
+            <ul class="plan__liste">
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span><b>25 articles</b> par mois, à votre ton</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span><b>150 questions</b> suivies chaque semaine</span><span class="sugg" title="Suggestion à valider">?</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span><b>10 concurrents</b> comparés</span><span class="sugg" title="Suggestion à valider">?</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span>Articles relayés sur LinkedIn</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span>Guides longs (pages piliers) chaque mois</span><span class="sugg" title="Suggestion à valider">?</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span>Point mensuel avec Marc Signorel</span><span class="sugg" title="Suggestion à valider">?</span></li>
+              <li><svg class="plan__ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span>Mise en place : <s>880&nbsp;€</s> <b class="plan__offert">offerte</b></span></li>
+            </ul>
+          </article>
+        </div>
+        <div class="plans__points" aria-hidden="true"><span></span><span></span><span></span></div>
+
+        <p class="offres__inclus"><b>Dans toutes les offres&nbsp;:</b> les questions où vous êtes absent, repérées chaque semaine · vous validez chaque article avant publication · publication sur votre WordPress · vos contenus vous appartiennent.</p>
+
+        <div class="repere">
+          <p class="repere__titre">Où se situe SILLAGE&nbsp;? <span class="sugg" title="Suggestion à valider">?</span></p>
+          <ul class="repere__liste">
+            <li><b>Outil de suivi seul</b><span>Mesure votre visibilité, mais n'écrit rien.</span></li>
+            <li><b>Agence GEO</b><span>Écrit pour vous, souvent à partir d'environ 1&nbsp;000&nbsp;€ par mois.</span></li>
+            <li class="repere__nous"><b>SILLAGE</b><span>Mesure, écrit et publie, dès <span class="repere__prix">149</span>&nbsp;€ par mois.</span></li>
+          </ul>
+        </div>
+
+        <p class="offres__note">15 jours d'essai sur chaque offre · Sans engagement en mensuel · Prérequis&nbsp;: WordPress&nbsp;6+ · Prix HT<span class="offres__legende"> · <span class="sugg" title="Suggestion à valider">?</span> = suggestion à valider</span></p>
+      </div>
+    </section>
+
     <section class="rdv" id="audit" aria-labelledby="rdv-titre">
       <div class="rdv__inner">
 
@@ -513,6 +598,6 @@
     <p class="footer__copy">© 2026 SILLAGE</p>
   </footer>
 
-  <script src="js/main.js?v=mobile6"></script>
+  <script src="js/main.js?v=offres1"></script>
 </body>
 </html>

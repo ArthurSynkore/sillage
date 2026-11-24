@@ -475,7 +475,8 @@
   // ---------- 5. Rendez-vous : agenda de démonstration ----------
   // MAQUETTE : rien n'est envoyé ni enregistré. Les disponibilités sont inventées
   // (jours ouvrés, créneaux de 30 min). À remplacer par un vrai outil de réservation.
-  var rdv = document.querySelector('.rdv');
+  // Section qui suit la partie blanche : le rendez-vous (version agence) ou les offres (version SaaS)
+  var rdv = document.querySelector(document.documentElement.classList.contains('v-agence') ? '.rdv' : '.offres');
   (function () {
     var agenda = document.getElementById('agenda');
     var choix = agenda.querySelector('.agenda__choix');
@@ -655,4 +656,64 @@
   window.addEventListener('resize', onResize);
   window.addEventListener('load', onResize);
   if (window.ResizeObserver) new ResizeObserver(onResize).observe(pourqui);
+
+  // ---------- 8. Offres (version SaaS) ----------
+  // Mensuel / annuel (2 mois offerts = 10 mois payés sur 12), prix par article, et sur téléphone
+  // le carrousel s'ouvre sur l'offre recommandée, avec des points qui suivent le glissement.
+  (function () {
+    var offres = document.querySelector('.offres');
+    if (!offres) return;
+    var plans = Array.prototype.slice.call(offres.querySelectorAll('.plan'));
+    var boutons = offres.querySelectorAll('.periode__btn');
+    var prixRepere = offres.querySelector('.repere__prix');
+    var euro = function (n, dec) {
+      return n.toLocaleString('fr-FR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+    };
+    function afficher(periode, anime) {
+      plans.forEach(function (plan) {
+        var m = +plan.dataset.mensuel, art = +plan.dataset.articles;
+        var prix = periode === 'annuel' ? Math.round(m * 10 / 12) : m;
+        var montant = plan.querySelector('.plan__montant');
+        var maj = function () {
+          montant.textContent = euro(prix, 0);
+          var parArt = prix / art;
+          plan.querySelector('.plan__parart').textContent = 'soit ' + euro(parArt, parArt % 1 ? 2 : 0) + ' € l\'article';
+          montant.classList.remove('is-change');
+        };
+        if (anime && !reduceMotion) { montant.classList.add('is-change'); setTimeout(maj, 180); } else maj();
+      });
+      if (prixRepere) {
+        var min = Math.min.apply(null, plans.map(function (p) { return +p.dataset.mensuel; }));
+        prixRepere.textContent = euro(periode === 'annuel' ? Math.round(min * 10 / 12) : min, 0);
+      }
+      boutons.forEach(function (b) {
+        var on = b.dataset.periode === periode;
+        b.classList.toggle('is-on', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    }
+    boutons.forEach(function (b) { b.addEventListener('click', function () { afficher(b.dataset.periode, true); }); });
+    afficher('mensuel', false);
+
+    // Téléphone : carrousel
+    var rail = offres.querySelector('.plans');
+    var points = offres.querySelectorAll('.plans__points span');
+    function actif() {
+      var centre = rail.scrollLeft + rail.clientWidth / 2, best = 0, dist = Infinity;
+      plans.forEach(function (p, i) {
+        var d = Math.abs(p.offsetLeft + p.offsetWidth / 2 - centre);
+        if (d < dist) { dist = d; best = i; }
+      });
+      points.forEach(function (s, i) { s.classList.toggle('is-on', i === best); });
+    }
+    function centrerRecommande() {
+      if (rail.scrollWidth <= rail.clientWidth + 2) return;
+      var p = offres.querySelector('.plan--croissance');
+      rail.scrollLeft = p.offsetLeft + p.offsetWidth / 2 - rail.clientWidth / 2;
+      actif();
+    }
+    rail.addEventListener('scroll', actif, { passive: true });
+    window.addEventListener('load', centrerRecommande);
+    centrerRecommande();
+  })();
 })();

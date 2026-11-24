@@ -964,6 +964,157 @@ body.menu-open { overflow: hidden; }
   html { scroll-behavior: auto; }
 }
 
+/* ---------- 11 bis. Offres (version SaaS) ----------
+   Version SaaS par défaut : les offres remplacent le rendez-vous.
+   Avec ?version=agence (classe .v-agence sur <html>) : le rendez-vous revient, les offres disparaissent. */
+.rdv { display: none; }
+.v-agence .rdv { display: block; }
+.v-agence .offres { display: none; }
+.v-agence-txt { display: none; }
+.v-agence .v-agence-txt { display: inline; }
+.v-agence .v-saas-txt { display: none; }
+
+.offres {
+  position: relative; z-index: 2;
+  padding: clamp(72px, 12vh, 130px) var(--pad) clamp(56px, 9vh, 100px);
+  background: var(--sea); color: var(--foam);
+  scroll-margin-top: 0;
+}
+.offres__inner { max-width: 1180px; margin: 0 auto; }
+.offres__tete { text-align: center; }
+.offres h2 {
+  font-family: var(--font-title); font-weight: 400;
+  font-size: clamp(32px, 4.6vw, 64px); line-height: 1.04; letter-spacing: -.01em;
+}
+.offres__lead { max-width: 52ch; margin: 16px auto 0; font-size: clamp(15px, 1.2vw, 17px); line-height: 1.5; color: rgb(245 242 234 / .72); }
+
+/* Choix mensuel / annuel */
+.periode {
+  display: inline-flex; gap: 4px; margin-top: 26px; padding: 4px;
+  border-radius: 999px; background: rgb(245 242 234 / .08);
+}
+.periode__btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border: 0; border-radius: 999px; cursor: pointer;
+  font: 500 14px/1 var(--font-text); color: rgb(245 242 234 / .75); background: transparent;
+  transition: background .25s, color .25s;
+}
+.periode__btn.is-on { background: var(--foam); color: var(--ink); }
+.periode__gain {
+  padding: 3px 7px; border-radius: 999px; font-size: 11.5px; font-weight: 600;
+  background: rgb(127 179 166 / .18); color: var(--algue);
+}
+.periode__btn.is-on .periode__gain { background: rgb(127 179 166 / .22); color: #2f6b5d; }
+
+/* Les 3 offres */
+.plans {
+  margin-top: clamp(28px, 5vh, 48px);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start;
+}
+.plan {
+  position: relative; display: flex; flex-direction: column;
+  padding: 26px 24px 24px; border-radius: 22px;
+  background: rgb(245 242 234 / .06); border: 1px solid rgb(245 242 234 / .12);
+  transition: transform .3s ease, border-color .3s ease;
+}
+.plan:hover { transform: translateY(-3px); border-color: rgb(245 242 234 / .24); }
+/* L'offre recommandée : en clair, surélevée */
+.plan--croissance {
+  background: var(--paper); color: var(--ink); border-color: var(--paper);
+  box-shadow: 0 24px 60px rgb(0 0 0 / .28);
+}
+@media (min-width: 861px) { .plan--croissance { margin-top: -14px; } }
+.plan__badge {
+  position: absolute; top: -12px; left: 24px;
+  padding: 5px 11px; border-radius: 999px;
+  background: var(--signal); color: #fff; font-size: 12px; font-weight: 600;
+}
+.plan__nom { font-family: var(--font-title); font-weight: 400; font-size: 30px; line-height: 1; }
+.plan--croissance .plan__nom { color: var(--signal); }
+.plan__pour { margin-top: 8px; font-size: 14px; line-height: 1.4; color: rgb(245 242 234 / .62); min-height: 2.8em; }
+.plan--croissance .plan__pour { color: rgb(11 34 49 / .62); }
+.plan__prix { display: flex; align-items: flex-end; gap: 8px; margin-top: 18px; }
+.plan__montant {
+  font-family: var(--font-title); font-size: 62px; line-height: .85; font-variant-numeric: tabular-nums;
+  display: inline-block; transition: opacity .2s, transform .2s;
+}
+.plan__montant.is-change { opacity: 0; transform: translateY(6px); }
+.plan__unite { font-size: 12.5px; line-height: 1.25; color: rgb(245 242 234 / .6); padding-bottom: 4px; }
+.plan--croissance .plan__unite { color: rgb(11 34 49 / .6); }
+.plan__detail { margin-top: 10px; font-size: 13.5px; color: rgb(245 242 234 / .7); }
+.plan__detail b { color: var(--foam); font-weight: 600; }
+.plan--croissance .plan__detail { color: rgb(11 34 49 / .66); }
+.plan--croissance .plan__detail b { color: var(--ink); }
+.plan__cta { margin-top: 20px; width: 100%; }
+.btn--ghost-clair { border-color: rgb(245 242 234 / .4); color: var(--foam); }
+.btn--ghost-clair:hover { background: var(--foam); border-color: var(--foam); color: var(--ink); }
+.plan__liste { margin: 22px 0 0; padding: 18px 0 0; list-style: none; border-top: 1px solid rgb(245 242 234 / .12); display: grid; gap: 11px; }
+.plan--croissance .plan__liste { border-top-color: rgb(11 34 49 / .12); }
+.plan__liste li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.4; color: rgb(245 242 234 / .82); }
+.plan--croissance .plan__liste li { color: rgb(11 34 49 / .85); }
+.plan__liste b { font-weight: 600; color: inherit; }
+.plan__ic { width: 16px; height: 16px; flex: none; margin-top: 2px; fill: none; stroke: var(--algue); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.plan--croissance .plan__ic { stroke: var(--signal); }
+.plan__offert { color: var(--signal); }
+/* Point d'interrogation : suggestion à valider */
+.sugg {
+  display: inline-grid; place-items: center; flex: none;
+  width: 17px; height: 17px; margin-left: 2px; margin-top: 1px; border-radius: 50%;
+  font: 700 10.5px/1 var(--font-text); cursor: help;
+  color: #8a6a1f; background: #f3e2b3;
+}
+
+.plans__points { display: none; }
+
+.offres__inclus {
+  max-width: 820px; margin: 30px auto 0; text-align: center;
+  font-size: 13.5px; line-height: 1.6; color: rgb(245 242 234 / .62);
+}
+.offres__inclus b { color: var(--foam); font-weight: 600; }
+
+/* Où se situe SILLAGE : outil de suivi / agence / SILLAGE */
+.repere { max-width: 900px; margin: 34px auto 0; }
+.repere__titre { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 600; color: rgb(245 242 234 / .55); }
+.repere__liste { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0 0; padding: 0; list-style: none; }
+.repere__liste li {
+  display: grid; gap: 4px; padding: 14px 16px; border-radius: 16px;
+  background: rgb(245 242 234 / .04); font-size: 13px; line-height: 1.4; color: rgb(245 242 234 / .6);
+}
+.repere__liste b { font-size: 14px; color: var(--foam); font-weight: 600; }
+.repere__nous { background: rgb(228 87 46 / .14) !important; color: rgb(245 242 234 / .85) !important; }
+.repere__nous b { color: var(--signal); }
+
+.offres__note { margin-top: 26px; text-align: center; font-size: 12.5px; color: rgb(245 242 234 / .45); }
+
+/* Téléphone : les offres défilent de côté (on glisse du doigt), l'offre recommandée en premier plan */
+@media (max-width: 860px) {
+  .offres { padding: calc(var(--header-h) + 20px) 0 48px; }
+  .offres__tete, .offres__inclus, .repere, .offres__note { padding: 0 var(--pad); }
+  .offres h2 { font-size: 32px; }
+  .offres__lead { font-size: 15px; margin-top: 12px; }
+  .periode { margin-top: 20px; }
+  .plans {
+    display: flex; gap: 12px; margin-top: 30px;
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 var(--pad);
+    padding: 16px var(--pad) 18px;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .plans::-webkit-scrollbar { display: none; }
+  .plan { flex: 0 0 82%; scroll-snap-align: center; padding: 22px 18px 20px; }
+  .plan:hover { transform: none; }
+  .plan__montant { font-size: 54px; }
+  .plan__pour { min-height: 0; }
+  .plans__points { display: flex; justify-content: center; gap: 7px; margin-top: 4px; }
+  .plans__points span { width: 7px; height: 7px; border-radius: 50%; background: rgb(245 242 234 / .25); transition: background .25s, width .25s; }
+  .plans__points span.is-on { width: 20px; border-radius: 4px; background: var(--foam); }
+  .offres__inclus { margin-top: 22px; text-align: left; font-size: 13px; }
+  .repere { margin-top: 24px; }
+  .repere__titre { justify-content: flex-start; }
+  .repere__liste { grid-template-columns: 1fr; gap: 8px; }
+  .repere__liste li { padding: 12px 14px; }
+  .offres__note { text-align: left; }
+}
+
 /* ---------- 12. Pied de page ---------- */
 .footer {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px;
