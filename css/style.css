@@ -99,28 +99,24 @@ h1, h2, h3, p { margin: 0; }
   color: var(--ink);
 }
 .header__layer--light { color: var(--foam); clip-path: polygon(0 0, 0 0, 0 0); }
-/* Dès qu'on descend : un rectangle arrondi translucide derrière le menu, pour qu'il ne chevauche
+/* Dès qu'on descend : un bandeau translucide sur toute la largeur derrière le menu, pour qu'il ne chevauche
    plus le contenu. Clair sous la couche encre, sombre sous la couche claire (qui suit le sillage). */
 .header__layer::before {
   content: ""; position: absolute; z-index: -1;
-  inset: 10px calc(var(--pad) - 16px);
-  border-radius: 18px;
-  background: rgb(245 242 234 / .78);
-  border: 1px solid rgb(11 34 49 / .08);
-  box-shadow: 0 8px 24px rgb(11 34 49 / .08);
+  inset: 0;
+  background: rgb(245 242 234 / .72);
+  border-bottom: 1px solid rgb(11 34 49 / .08);
   -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%);
-  opacity: 0; transform: translateY(-6px);
-  transition: opacity .3s ease, transform .3s ease;
+  opacity: 0;
+  transition: opacity .3s ease;
   pointer-events: none;
 }
 .header__layer--light::before {
-  background: rgb(10 42 60 / .72);
+  background: rgb(10 42 60 / .62);
   border-color: rgb(245 242 234 / .1);
-  box-shadow: 0 8px 24px rgb(0 0 0 / .18);
 }
-.is-scrolled .header__layer::before { opacity: 1; transform: none; }
+.is-scrolled .header__layer::before { opacity: 1; }
 .header__layer { isolation: isolate; }
-@media (max-width: 860px) { .header__layer::before { inset: 8px 10px; border-radius: 16px; } }
 body.menu-open .header__layer--light { display: none; }
 
 .logo { display: inline-flex; align-items: center; gap: 10px; }
@@ -550,26 +546,6 @@ body.menu-open { overflow: hidden; }
   .kpi--citations .kpi__sous { display: none; }
   .kpi--citations .courbe { height: 54px; min-height: 0; flex: none; margin-top: 6px; }
   .kpi--citations .courbe__axe { display: flex; font-size: 10.5px; margin-top: 4px; }
-  /* Part de voix : une barre segmentée + légende en 2 × 2 */
-  .barres { display: none; }
-  .voix { display: block; margin-top: 12px; }
-  .voix__barre { display: flex; gap: 3px; height: 12px; }
-  .voix__part {
-    flex: var(--v) 0 0; border-radius: 4px; background: rgb(245 242 234 / .22);
-    transform: scaleX(var(--p)); transform-origin: left;
-  }
-  .voix__part:nth-child(3) { background: rgb(245 242 234 / .15); }
-  .voix__part:nth-child(4) { background: rgb(245 242 234 / .1); }
-  .voix__part--marque { background: var(--signal); }
-  .voix__legende { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin: 10px 0 0; padding: 0; list-style: none; }
-  .voix__item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: rgb(245 242 234 / .6); white-space: nowrap; }
-  .voix__item i { width: 8px; height: 8px; border-radius: 2px; background: rgb(245 242 234 / .22); flex: none; }
-  .voix__item:nth-child(3) i { background: rgb(245 242 234 / .15); }
-  .voix__item:nth-child(4) i { background: rgb(245 242 234 / .1); }
-  .voix__item b { margin-left: auto; font-weight: 600; color: rgb(245 242 234 / .85); }
-  .voix__item--marque { color: var(--foam); font-weight: 600; }
-  .voix__item--marque i { background: var(--signal); }
-  .voix__item--marque b { color: var(--foam); }
   /* Anneau et jauge : centrés */
   .kpi--taux .kpi__titre, .kpi--ton .kpi__titre { text-align: center; }
   .kpi--taux .kpi__sous, .kpi--ton .kpi__sous { font-size: 11.5px; }
@@ -625,34 +601,37 @@ body.menu-open { overflow: hidden; }
 }
 .courbe__point { width: 12px; height: 12px; margin: -6px -6px 0 0; border: 2px solid #fff; box-shadow: 0 0 0 4px rgb(228 87 46 / .25), 0 2px 6px rgb(0 0 0 / .4); }
 
-/* Part de voix : une barre découpée en parts (code mobile, aussi sur ordi) */
+/* Part de voix : 100 cases = 100 % des citations IA du marché (comme les cases de la section Fonctionnement).
+   Chaque case apparaît à son tour au défilement (--k = son numéro, --p = progression de la carte). */
 .barres { display: none !important; }
-.voix { display: block; margin-top: 16px; }
-.voix__barre {
-  display: flex; gap: 4px; height: 16px; padding: 3px; border-radius: 10px;
-  background: rgb(2 12 18 / .35); box-shadow: inset 0 2px 4px rgb(0 0 0 / .35);
+.voix { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 22px; margin-top: 16px; }
+.voix__cases {
+  display: grid; grid-template-rows: repeat(5, 1fr); grid-auto-flow: column; grid-auto-columns: 1fr;
+  gap: 3px; aspect-ratio: 20 / 5.2;
 }
-.voix__part {
-  flex: var(--v) 0 0; border-radius: 6px;
-  transform: scaleX(var(--p)); transform-origin: left;
-  /* hachures façon carte marine */
-  background: repeating-linear-gradient(-45deg, rgb(245 242 234 / .32) 0 2px, rgb(245 242 234 / .12) 2px 5px);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / .18);
+.carre {
+  --on: clamp(0, calc((var(--p) * 115 - var(--k)) / 10), 1);
+  border-radius: 3px; opacity: var(--on);
+  transform: scale(calc(.35 + .65 * var(--on)));
+  background: repeating-linear-gradient(-45deg, rgb(245 242 234 / .45) 0 1.5px, rgb(245 242 234 / .16) 1.5px 3.5px);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .15);
 }
-.voix__part:nth-child(3) { opacity: .7; }
-.voix__part:nth-child(4) { opacity: .45; }
-.voix__part--marque {
-  background: linear-gradient(180deg, #f2875f, #e4572e 55%, #c4421d);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / .35), 0 2px 6px rgb(228 87 46 / .45);
+.carre--marque {
+  background: linear-gradient(160deg, #f49470, #e4572e 55%, #c4421d);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .35), 0 1px 2px rgb(0 0 0 / .35);
 }
-.voix__legende { display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; gap: 6px 18px; margin: 14px 0 0; padding: 0; list-style: none; }
-.voix__item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: rgb(245 242 234 / .62); white-space: nowrap; }
-.voix__item i { width: 10px; height: 10px; border-radius: 3px; flex: none; background: repeating-linear-gradient(-45deg, rgb(245 242 234 / .5) 0 2px, rgb(245 242 234 / .18) 2px 4px); }
-.voix__item:nth-child(3) i { opacity: .7; }
-.voix__item:nth-child(4) i { opacity: .45; }
-.voix__item b { margin-left: 4px; font-weight: 600; color: rgb(245 242 234 / .9); }
+.carre--b { filter: opacity(.68); }
+.carre--c { filter: opacity(.42); }
+.carre--autres { background: none; box-shadow: inset 0 0 0 1px rgb(245 242 234 / .16); }
+.voix__legende { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; min-width: 168px; }
+.voix__item { display: grid; grid-template-columns: 11px 1fr auto; align-items: center; gap: 8px; font-size: 13px; color: rgb(245 242 234 / .62); white-space: nowrap; }
+.voix__item i { width: 11px; height: 11px; border-radius: 3px; background: repeating-linear-gradient(-45deg, rgb(245 242 234 / .5) 0 1.5px, rgb(245 242 234 / .18) 1.5px 3.5px); }
+.voix__item--b i { opacity: .68; }
+.voix__item--c i { opacity: .42; }
+.voix__item b { font-family: var(--font-title); font-weight: 400; font-size: 17px; letter-spacing: .01em; color: rgb(245 242 234 / .88); }
 .voix__item--marque { color: var(--foam); font-weight: 600; }
-.voix__item--marque i { background: var(--signal); }
+.voix__item--marque i { background: linear-gradient(160deg, #f49470, #e4572e); }
+.voix__item--marque b { font-size: 26px; color: #fff; }
 
 /* Cadrans : graduations fines comme un instrument de bord */
 .cadran__graduations { fill: none; stroke: rgb(245 242 234 / .3); stroke-width: 1; stroke-linecap: round; }
@@ -662,21 +641,31 @@ body.menu-open { overflow: hidden; }
 .anneau svg { transform: none; }
 .anneau__piste { fill: none; stroke: url(#hachures); stroke-width: 11; }
 .anneau__val { fill: none; stroke: url(#grad-algue); stroke-width: 11; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: calc(100 - var(--v) * var(--p)); }
-.anneau__disque { fill: url(#grad-disque); stroke: rgb(245 242 234 / .12); stroke-width: 1; filter: drop-shadow(0 3px 5px rgb(0 0 0 / .45)); }
-.anneau__chiffre { font-size: clamp(28px, 4.6vh, 40px); text-shadow: 0 2px 6px rgb(0 0 0 / .4); }
+/* Le centre est un vrai bouton : un creux sombre, le bouton bombé posé dedans, un biseau clair en haut,
+   et le chiffre gravé dans le bouton (taille liée à la largeur de l'anneau, unité cqw). */
+.anneau { container-type: inline-size; }
+.anneau__creux { fill: rgb(0 0 0 / .32); }
+.anneau__disque { fill: url(#grad-disque); filter: drop-shadow(0 2px 2.5px rgb(0 0 0 / .55)); }
+.anneau__biseau { fill: none; stroke: url(#grad-biseau); stroke-width: 1.4; }
+.anneau__chiffre {
+  font-size: 14.5cqw !important; letter-spacing: -.01em;
+  color: #d9e6ea;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / .55), 0 1px 0 rgb(255 255 255 / .18);
+}
+.anneau__chiffre small { font-size: .55em; color: rgb(217 230 234 / .6); margin-left: 1px; }
 
 /* Jauge (ton) : manomètre, arc sable → cuivre → orange en relief, aiguille */
 .jauge { width: clamp(170px, 26vh, 220px); }
 .jauge__piste { fill: none; stroke: url(#hachures); stroke-width: 12; stroke-linecap: round; }
 .jauge__val { fill: none; stroke: url(#grad-cuivre); stroke-width: 12; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: calc(100 - var(--v) * var(--p)); }
-.jauge__repere { font: 600 8px var(--font-text); fill: rgb(245 242 234 / .45); }
+.jauge__repere { font: 600 8.5px var(--font-text); fill: rgb(245 242 234 / .5); letter-spacing: .04em; }
 .jauge__aiguille {
   fill: #f5f2ea;
   transform-box: view-box; transform-origin: 80px 84px;
   transform: rotate(calc(1.8deg * 82 * var(--p)));
 }
 .jauge__moyeu { fill: #e4572e; }
-.jauge__chiffre { position: static; margin-top: 2px; font-size: clamp(30px, 5vh, 44px); text-shadow: 0 2px 6px rgb(0 0 0 / .4); }
+.jauge__chiffre { position: static; margin-top: clamp(8px, 1.4vh, 14px); line-height: 1; font-size: clamp(30px, 5vh, 44px); text-shadow: 0 2px 6px rgb(0 0 0 / .4); }
 .kpi__favorable { color: #f1c98a !important; }
 
 /* Compteurs de la section Fonctionnement : icône + chiffre (code mobile, aussi sur ordi) */
@@ -690,11 +679,13 @@ body.menu-open { overflow: hidden; }
   .badge, .pastille { font-size: 10.5px; padding: 4px 9px 4px 7px; }
   .badge__ic, .pastille__ic { width: 12px; height: 12px; }
   .kpi__titre { font-size: 11px; }
-  .voix { margin-top: 12px; }
-  .voix__barre { height: 14px; }
-  .voix__legende { grid-template-columns: 1fr 1fr; justify-content: stretch; gap: 6px 12px; }
+  .voix { grid-template-columns: 1fr; gap: 12px; margin-top: 12px; }
+  .voix__cases { gap: 2px; }
+  .carre { border-radius: 2px; }
+  .voix__legende { grid-template-columns: 1fr 1fr; gap: 6px 14px; min-width: 0; }
   .voix__item { font-size: 11.5px; }
-  .voix__item b { margin-left: auto; }
+  .voix__item b { font-size: 15px; }
+  .voix__item--marque b { font-size: 19px; }
   .anneau { width: 96px; }
   .anneau__chiffre { font-size: 24px; }
   .jauge { width: 140px; }
