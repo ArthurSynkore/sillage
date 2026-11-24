@@ -637,7 +637,11 @@
   }
 
   // ---------- Démarrage ----------
-  function onScroll() { update(); updatePourqui(); updatePhare(); }
+  var racine = document.documentElement;
+  function onScroll() {
+    racine.classList.toggle('is-scrolled', window.scrollY > 24);   // fond translucide du menu
+    update(); updatePourqui(); updatePhare();
+  }
   // Sur téléphone, la barre d'adresse qui apparaît/disparaît change la hauteur de l'écran à chaque
   // défilement : on ne recalcule pas tout pour ça (sinon la page saute en arrière). Seuls un vrai
   // changement de largeur ou un grand changement de hauteur (rotation) déclenchent un recalcul.
