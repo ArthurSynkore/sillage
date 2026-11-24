@@ -18,12 +18,21 @@
   --signal: #e4572e;      /* accent orange */
   --flash: #ffd65a;       /* éclat du phare */
 
-  --font-title: "Instrument Serif", "Times New Roman", serif;
-  --font-text: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --font-title: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-text: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --header-h: 76px;
   --pad: clamp(20px, 5vw, 72px);
+}
+
+/* Polices hébergées sur le site */
+@font-face {
+  font-family: "Newsreader"; font-style: normal; font-display: swap; font-weight: 200 800;
+  src: url("../fonts/newsreader-latin-opsz-normal.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Schibsted Grotesk"; font-style: normal; font-display: swap; font-weight: 400 900;
+  src: url("../fonts/schibsted-grotesk-latin-wght-normal.woff2") format("woff2-variations");
 }
 
 /* ---------- 2. Base ---------- */
@@ -53,14 +62,6 @@ h1, h2, h3, p { margin: 0; }
 }
 .skip-link:focus { top: 12px; }
 
-.eyebrow {
-  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
-  font-family: var(--font-mono); font-size: 12px; font-weight: 500;
-  letter-spacing: .12em; text-transform: uppercase;
-}
-.eyebrow__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--signal); }
-.eyebrow__coord { opacity: .55; font-weight: 400; }
-.eyebrow--clair { color: var(--foam); }
 
 /* ---------- 3. Boutons ---------- */
 .btn {
@@ -75,8 +76,7 @@ h1, h2, h3, p { margin: 0; }
 .btn--ghost { border-color: currentColor; padding: 9px 18px; font-size: 14px; }
 .btn--ghost:hover { background: var(--signal); border-color: var(--signal); color: #fff; }
 .btn--link { padding-left: 4px; padding-right: 4px; }
-.btn--link span { transition: transform .2s; }
-.btn--link:hover span { transform: translateX(4px); }
+.btn--link { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
 
 /* ---------- 4. Navigation ---------- */
 .header {
@@ -165,7 +165,7 @@ body.menu-open { overflow: hidden; }
   color: var(--ink); opacity: .11;
   pointer-events: none;
 }
-.hero__sondes { font-family: var(--font-mono); font-size: 13px; fill: currentColor; opacity: 2.6; }
+.hero__sondes { font-size: 13px; fill: currentColor; opacity: 2.6; }
 
 /* Rose des vents */
 .compass {
@@ -175,7 +175,7 @@ body.menu-open { overflow: hidden; }
   color: var(--ink); opacity: .8;
   pointer-events: none;
 }
-.compass__lettres { font-family: var(--font-mono); font-size: 11px; text-anchor: middle; }
+.compass__lettres { font-size: 13px; text-anchor: middle; }
 .compass__aiguille path { stroke: var(--signal); stroke-width: 1.2; fill: none; }
 .compass__aiguille circle { fill: var(--paper); stroke: var(--signal); stroke-width: 1.2; }
 
@@ -188,7 +188,6 @@ body.menu-open { overflow: hidden; }
   line-height: .98; letter-spacing: -.012em;
   text-wrap: balance;
 }
-.hero h1 em { font-style: italic; color: var(--signal); }
 
 .hero__lead {
   margin-top: 26px; max-width: 520px;
@@ -199,30 +198,22 @@ body.menu-open { overflow: hidden; }
 
 .hero__bas { position: absolute; left: var(--pad); bottom: 30px; max-width: 62%; }
 .hero__moteurs {
-  font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em; color: var(--ink-soft);
+  font-size: 14px; letter-spacing: .04em; color: var(--ink-soft);
 }
 .hero__moteurs span {
-  display: block; margin-bottom: 4px;
-  font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7;
+  display: block; margin-bottom: 10px;
+  font-size: 11px; opacity: .7;
 }
 
-/* Repère de départ du bateau (à 84 % de la largeur, comme dans main.js) */
-.hero__cap {
-  position: absolute; left: 84%; bottom: 0;
-  transform: translateX(-50%);
-  display: none; flex-direction: column; align-items: center; gap: 10px;
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
-  white-space: nowrap; color: var(--ink-soft);
-}
-.js .hero__cap { display: flex; transition: opacity .3s; }
-.is-sailing .hero__cap { opacity: 0; }
-.hero__cap span { width: 1px; height: 34px; background: currentColor; transform-origin: bottom; animation: cap 2.4s ease-in-out infinite; }
-@keyframes cap { 0%, 100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+/* Logos des IA (monochromes, couleur du texte) */
+.moteurs { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 0; padding: 0; list-style: none; }
+.moteur { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.moteur__logo { width: 17px; height: 17px; flex: none; opacity: .9; }
+
 
 @media (max-width: 860px) {
   .compass { top: auto; bottom: 8%; right: -32vw; width: 86vw; transform: none; opacity: .22; }
   .hero { padding-bottom: 110px; }
-  .hero__cap { font-size: 10px; }
 }
 @media (max-height: 600px) {
   .hero__bas { display: none; }
@@ -257,7 +248,6 @@ body.menu-open { overflow: hidden; }
 .js .wake__water { z-index: 2; }
 .js .wake__water > .hero { filter: url(#eau) blur(9px) saturate(130%); }
 .js .wake__water::after { background: rgb(var(--sea-rgb) / var(--alpha, .72)); }
-.wake__rim .hero__cap, .wake__water .hero__cap { display: none; }
 .js .wake__lines { z-index: 3; width: 100%; height: 100%; clip-path: none; pointer-events: none; }
 .js .wake__content { z-index: 4; }
 
@@ -285,7 +275,7 @@ body.menu-open { overflow: hidden; }
 .resultats__inner { width: 100%; max-width: 1240px; margin: 0 auto; }
 
 .resultats h2 {
-  margin-top: 22px; max-width: 12em;
+  margin-top: 0; max-width: 12em;
   font-family: var(--font-title); font-weight: 400;
   font-size: clamp(34px, 5vw, 72px); line-height: 1.02; letter-spacing: -.01em;
 }
@@ -305,7 +295,7 @@ body.menu-open { overflow: hidden; }
 
 .resultats__note {
   margin-top: clamp(24px, 5vh, 56px);
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; opacity: .5;
+  font-size: 13px; opacity: .5;
 }
 
 @media (max-width: 860px) {
@@ -321,7 +311,7 @@ body.menu-open { overflow: hidden; }
 }
 .pourqui__inner { max-width: 1240px; margin: 0 auto; }
 .pourqui h2 {
-  margin-top: 22px;
+  margin-top: 0;
   font-family: var(--font-title); font-weight: 400;
   font-size: clamp(34px, 5vw, 72px); line-height: 1.02; letter-spacing: -.01em;
 }
@@ -464,8 +454,7 @@ body.menu-open { overflow: hidden; }
   text-align: right;
 }
 .fonct__niveau {
-  font-family: var(--font-mono); font-size: 12px; font-weight: 500;
-  letter-spacing: .12em; text-transform: uppercase; color: var(--signal);
+  font-size: 14px; font-weight: 500; color: var(--signal);
 }
 .fonct__phrases { margin: 14px 0 0; padding: 0; list-style: none; display: grid; }
 .fonct__phrases li {
@@ -505,7 +494,7 @@ body.menu-open { overflow: hidden; }
 
 .fonct__compteurs {
   margin-top: 26px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px 22px;
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft);
+  font-size: 13px; color: var(--ink-soft);
 }
 .fonct__compteurs li { display: flex; align-items: center; gap: 7px; }
 .fonct__compteurs svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
@@ -532,10 +521,10 @@ body.menu-open { overflow: hidden; }
   display: flex; flex-direction: column; gap: 2px;
 }
 .rdv__portrait strong { font-family: var(--font-title); font-weight: 400; font-size: 28px; line-height: 1.1; }
-.rdv__portrait span { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
+.rdv__portrait span { font-size: 13px; opacity: .75; }
 
 .rdv h2 {
-  margin-top: 22px;
+  margin-top: 0;
   font-family: var(--font-title); font-weight: 400;
   font-size: clamp(34px, 4.4vw, 62px); line-height: 1.02; letter-spacing: -.01em;
   text-wrap: balance;
@@ -543,7 +532,7 @@ body.menu-open { overflow: hidden; }
 .rdv__lead { margin-top: 20px; max-width: 54ch; font-size: clamp(16px, 1.25vw, 18px); opacity: .82; }
 .rdv__points {
   margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px 22px;
-  font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+  font-size: 14px;
 }
 .rdv__points li { display: flex; align-items: center; gap: 8px; }
 .rdv__points li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--signal); }
@@ -558,7 +547,7 @@ body.menu-open { overflow: hidden; }
   padding-bottom: 16px; border-bottom: 1px solid rgb(11 34 49 / .14);
 }
 .agenda__titre { font-family: var(--font-title); font-size: 26px; line-height: 1.1; }
-.agenda__meta { display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.agenda__meta { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--ink-soft); }
 
 .agenda__choix { margin-top: 20px; display: grid; grid-template-columns: minmax(0, 1fr) 190px; gap: 28px; }
 .agenda__choix[hidden], .agenda__form[hidden], .agenda__ok[hidden] { display: none; }
@@ -573,7 +562,7 @@ body.menu-open { overflow: hidden; }
 .agenda__nav:disabled { opacity: .25; cursor: default; }
 
 .agenda__semaine, .agenda__jours { display: grid; grid-template-columns: repeat(7, 1fr); justify-items: center; }
-.agenda__semaine { margin-top: 10px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.agenda__semaine { margin-top: 10px; font-size: 12px; color: var(--ink-soft); }
 .agenda__jours { margin-top: 6px; row-gap: 4px; }
 .agenda__jours button {
   width: 40px; height: 40px; max-width: 100%; border: 0; border-radius: 50%;
@@ -640,5 +629,15 @@ body.menu-open { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .hero__cap span { animation: none; }
 }
+
+/* ---------- 12. Pied de page ---------- */
+.footer {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px;
+  padding: 36px var(--pad); border-top: 1px solid rgb(11 34 49 / .12);
+  font-size: 14px; color: var(--ink-soft);
+}
+.footer__webstorm { display: inline-flex; align-items: center; gap: 12px; }
+.footer__webstorm strong { font-weight: 600; color: var(--ink); }
+.footer__webstorm:hover strong { text-decoration: underline; text-underline-offset: 3px; }
+.footer__logo { width: 28px; height: 28px; flex: none; display: block; }

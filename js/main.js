@@ -526,7 +526,7 @@
     if (i !== lastStep) {
       lastStep = i;
       phrases.forEach(function (p, k) { p.classList.toggle('is-active', k === i); });
-      niveau.textContent = '0' + (i + 1) + ' / 0' + PALIERS.length + ' — ' + phrases[i].dataset.nom;
+      niveau.textContent = 'Étape ' + (i + 1) + ' sur ' + PALIERS.length + ' : ' + phrases[i].dataset.nom;
     }
     if (n !== lastN) {
       lastN = n;
