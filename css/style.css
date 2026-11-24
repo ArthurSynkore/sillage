@@ -296,7 +296,7 @@ body.menu-open { overflow: hidden; }
   height: 100vh; height: 100lvh;   /* grande hauteur d'écran : rien ne dépasse quand la barre d'adresse se cache */
   overflow: hidden;
 }
-.js .hero { position: absolute; inset: 0; min-height: 0; }
+.js .hero { position: absolute; inset: 0; min-height: 0; isolation: isolate; }   /* ses éléments ne passent jamais au-dessus du sillage */
 .js .wake__rim, .js .wake__water, .js .wake__lines, .js .wake__content {
   display: block; position: absolute; inset: 0;
   clip-path: polygon(0 0, 0 0, 0 0);
@@ -564,8 +564,24 @@ body.menu-open { overflow: hidden; }
     linear-gradient(-45deg, transparent calc(50% - .7px), currentColor calc(50% - .7px), currentColor calc(50% + .7px), transparent calc(50% + .7px));
 }
 
-@media (max-width: 860px) {
-  .pourqui__cols { grid-template-columns: 1fr; }
+/* Version courte des phrases : seulement sur téléphone */
+.pq-court { display: none; }
+
+/* Téléphone : les deux cadres côte à côte, phrases courtes, tout plus compact */
+@media (max-width: 640px) {
+  .pq-long { display: none; }
+  .pq-court { display: inline; }
+  .pourqui h2 { font-size: 30px; }
+  .pourqui__cols { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pourqui__col { padding: 14px 11px 10px; border-radius: 10px; }
+  .pourqui h3 { font-size: 18px; }
+  .pourqui__liste { margin-top: 8px; }
+  .pourqui__liste li, .js .pourqui__liste li {
+    grid-template-columns: 13px 1fr; gap: 7px;
+    padding: 9px 0; font-size: 12.5px; line-height: 1.3;
+  }
+  .pourqui__liste li::before { width: 13px; height: 13px; margin-top: 1px; }
+  .pourqui__col--non .pourqui__liste li::before { width: 9px; height: 9px; margin: 3px 2px 0; }
 }
 
 /* Avec JavaScript, la section occupe un écran et son contenu est centré : elle peut être épinglée au milieu */
@@ -610,6 +626,12 @@ body.menu-open { overflow: hidden; }
 @media (max-width: 860px) {
   .js .phare__tour { height: 24%; right: 6px; }
   .resultats__inner, .pourqui__inner { padding-right: 52px; }
+}
+/* Téléphone : pas assez de place pour le phare, il chevauchait le contenu → on le retire
+   et les cartes prennent toute la largeur */
+@media (max-width: 640px) {
+  .js .phare-fixe { display: none; }
+  .resultats__inner, .pourqui__inner { padding-right: 0; }
 }
 
 .js .escale { position: relative; }
