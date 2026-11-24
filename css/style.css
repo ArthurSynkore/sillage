@@ -20,8 +20,10 @@
   --algue: #7fb3a6;       /* secondaire discret : hausse, réussite */
   --sable: #d9c49a;       /* secondaire discret : jauges */
 
-  --font-title: "Newsreader", Georgia, "Times New Roman", serif;
-  --font-text: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Direction artistique : un Caslon de titrage (celui des vieux almanachs et cartes marines)
+     et une grotesque robuste pour le texte, à la façon d'une signalétique portuaire */
+  --font-title: "Libre Caslon Display", Georgia, "Times New Roman", serif;
+  --font-text: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --header-h: 76px;
   --pad: clamp(20px, 5vw, 72px);
@@ -29,12 +31,12 @@
 
 /* Polices hébergées sur le site */
 @font-face {
-  font-family: "Newsreader"; font-style: normal; font-display: swap; font-weight: 200 800;
-  src: url("../fonts/newsreader-latin-opsz-normal.woff2") format("woff2-variations");
+  font-family: "Libre Caslon Display"; font-style: normal; font-display: swap; font-weight: 400;
+  src: url("../fonts/libre-caslon-display-latin-400-normal.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Schibsted Grotesk"; font-style: normal; font-display: swap; font-weight: 400 900;
-  src: url("../fonts/schibsted-grotesk-latin-wght-normal.woff2") format("woff2-variations");
+  font-family: "Archivo"; font-style: normal; font-display: swap; font-weight: 100 900; font-stretch: 62% 125%;
+  src: url("../fonts/archivo-latin-standard-normal.woff2") format("woff2-variations");
 }
 
 /* ---------- 2. Base ---------- */
@@ -204,7 +206,7 @@ body.menu-open { overflow: hidden; }
 
 .surligne { position: relative; display: inline-block; white-space: nowrap; }
 .surligne__trait {
-  position: absolute; left: -2%; width: 104%; bottom: -.03em; height: .22em;
+  position: absolute; left: -2%; width: 104%; bottom: -.12em; height: .22em;
   overflow: visible; pointer-events: none;
 }
 .surligne__trait path { fill: none; stroke: var(--signal); stroke-linecap: round; vector-effect: non-scaling-stroke; }
@@ -1008,50 +1010,61 @@ body.menu-open { overflow: hidden; }
 
 /* Les 3 offres */
 .plans {
-  margin-top: clamp(28px, 5vh, 48px);
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start;
+  margin-top: clamp(30px, 5vh, 52px);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch;
 }
+/* Les 3 cartes : même taille, fond plein pour bien ressortir du bleu */
 .plan {
   position: relative; display: flex; flex-direction: column;
-  padding: 26px 24px 24px; border-radius: 22px;
-  background: rgb(245 242 234 / .06); border: 1px solid rgb(245 242 234 / .12);
-  transition: transform .3s ease, border-color .3s ease;
+  padding: 28px 26px 26px; border-radius: 24px;
+  background: #123a50; border: 1px solid rgb(245 242 234 / .16);
+  box-shadow: 0 18px 40px rgb(0 0 0 / .22);
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
 }
-.plan:hover { transform: translateY(-3px); border-color: rgb(245 242 234 / .24); }
-/* L'offre recommandée : en clair, surélevée */
+.plan:hover { transform: translateY(-4px); border-color: rgb(245 242 234 / .3); box-shadow: 0 26px 54px rgb(0 0 0 / .3); }
+/* L'offre recommandée : papier clair, liseré orange */
 .plan--croissance {
-  background: var(--paper); color: var(--ink); border-color: var(--paper);
-  box-shadow: 0 24px 60px rgb(0 0 0 / .28);
+  background: var(--paper); color: var(--ink); border-color: transparent;
+  box-shadow: 0 0 0 2px var(--signal), 0 28px 70px rgb(0 0 0 / .38);
 }
-@media (min-width: 861px) { .plan--croissance { margin-top: -14px; } }
+.plan--croissance:hover { box-shadow: 0 0 0 2px var(--signal), 0 34px 80px rgb(0 0 0 / .42); }
 .plan__badge {
-  position: absolute; top: -12px; left: 24px;
-  padding: 5px 11px; border-radius: 999px;
-  background: var(--signal); color: #fff; font-size: 12px; font-weight: 600;
+  position: absolute; top: -13px; right: 24px;
+  padding: 6px 12px; border-radius: 999px;
+  background: var(--signal); color: #fff; font-size: 12px; font-weight: 600; letter-spacing: .02em;
 }
-.plan__nom { font-family: var(--font-title); font-weight: 400; font-size: 30px; line-height: 1; }
-.plan--croissance .plan__nom { color: var(--signal); }
-.plan__pour { margin-top: 8px; font-size: 14px; line-height: 1.4; color: rgb(245 242 234 / .62); min-height: 2.8em; }
-.plan--croissance .plan__pour { color: rgb(11 34 49 / .62); }
+.plan__tete { display: flex; align-items: center; gap: 14px; }
+/* Une seule icône par carte : voilier, boussole, navire */
+.plan__icone {
+  width: 46px; height: 46px; flex: none; padding: 11px; border-radius: 50%;
+  background: rgb(245 242 234 / .09); color: var(--foam);
+  fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+}
+.plan--croissance .plan__icone { background: rgb(228 87 46 / .12); color: var(--signal); }
+.plan__nom { font-family: var(--font-title); font-weight: 400; font-size: 32px; line-height: 1; }
+.plan--croissance .plan__nom { color: var(--ink); }
+.plan__pour { margin-top: 12px; font-size: 14px; line-height: 1.45; color: rgb(245 242 234 / .66); min-height: 2.9em; }
+.plan--croissance .plan__pour { color: rgb(11 34 49 / .64); }
 .plan__prix { display: flex; align-items: flex-end; gap: 8px; margin-top: 18px; }
 .plan__montant {
-  font-family: var(--font-title); font-size: 62px; line-height: .85; font-variant-numeric: tabular-nums;
+  font-family: var(--font-title); font-size: 66px; line-height: .85; font-variant-numeric: tabular-nums;
   display: inline-block; transition: opacity .2s, transform .2s;
 }
 .plan__montant.is-change { opacity: 0; transform: translateY(6px); }
 .plan__unite { font-size: 12.5px; line-height: 1.25; color: rgb(245 242 234 / .6); padding-bottom: 4px; }
 .plan--croissance .plan__unite { color: rgb(11 34 49 / .6); }
-.plan__detail { margin-top: 10px; font-size: 13.5px; color: rgb(245 242 234 / .7); }
+.plan__detail { margin-top: 10px; font-size: 13.5px; color: rgb(245 242 234 / .72); }
 .plan__detail b { color: var(--foam); font-weight: 600; }
 .plan--croissance .plan__detail { color: rgb(11 34 49 / .66); }
 .plan--croissance .plan__detail b { color: var(--ink); }
 .plan__cta { margin-top: 20px; width: 100%; }
-.btn--ghost-clair { border-color: rgb(245 242 234 / .4); color: var(--foam); }
+.btn--ghost-clair { border-color: rgb(245 242 234 / .45); color: var(--foam); }
 .btn--ghost-clair:hover { background: var(--foam); border-color: var(--foam); color: var(--ink); }
-.plan__liste { margin: 22px 0 0; padding: 18px 0 0; list-style: none; border-top: 1px solid rgb(245 242 234 / .12); display: grid; gap: 11px; }
+/* La liste prend la place restante : les cartes ont toutes la même hauteur */
+.plan__liste { flex: 1; margin: 22px 0 0; padding: 18px 0 0; list-style: none; border-top: 1px solid rgb(245 242 234 / .14); display: grid; align-content: start; gap: 11px; }
 .plan--croissance .plan__liste { border-top-color: rgb(11 34 49 / .12); }
-.plan__liste li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.4; color: rgb(245 242 234 / .82); }
-.plan--croissance .plan__liste li { color: rgb(11 34 49 / .85); }
+.plan__liste li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.4; color: rgb(245 242 234 / .85); }
+.plan--croissance .plan__liste li { color: rgb(11 34 49 / .86); }
 .plan__liste b { font-weight: 600; color: inherit; }
 .plan__ic { width: 16px; height: 16px; flex: none; margin-top: 2px; fill: none; stroke: var(--algue); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .plan--croissance .plan__ic { stroke: var(--signal); }
@@ -1100,9 +1113,10 @@ body.menu-open { overflow: hidden; }
     scrollbar-width: none; -webkit-overflow-scrolling: touch;
   }
   .plans::-webkit-scrollbar { display: none; }
-  .plan { flex: 0 0 82%; scroll-snap-align: center; padding: 22px 18px 20px; }
+  .plan { flex: 0 0 84%; scroll-snap-align: center; padding: 24px 20px 22px; }
+  .plan__nom { font-size: 30px; }
   .plan:hover { transform: none; }
-  .plan__montant { font-size: 54px; }
+  .plan__montant { font-size: 58px; }
   .plan__pour { min-height: 0; }
   .plans__points { display: flex; justify-content: center; gap: 7px; margin-top: 4px; }
   .plans__points span { width: 7px; height: 7px; border-radius: 50%; background: rgb(245 242 234 / .25); transition: background .25s, width .25s; }
