@@ -226,19 +226,27 @@ body.menu-open { overflow: hidden; }
   margin-top: 26px;
   font-family: var(--font-title); font-weight: 400;
   font-size: clamp(54px, 9.2vw, 136px);
-  line-height: .98; letter-spacing: -.012em;
+  line-height: 1.06; letter-spacing: -.012em;   /* assez d'espace pour les accents des capitales (É) */
   text-wrap: balance;
 }
 
 .surligne { position: relative; display: inline-block; white-space: nowrap; }
+/* Trait à main levée : un aller vers la droite, un virage serré, un retour plus bas vers la gauche.
+   Il garde ses proportions (pas d'étirement) et peut déborder sur la ligne du dessous. */
 .surligne__trait {
-  position: absolute; left: -3%; width: 106%; bottom: -.11em; height: .24em; transform: rotate(-.8deg);
-  overflow: visible; pointer-events: none;
+  position: absolute; left: -2%; width: 104%; top: 82%;
+  height: auto; aspect-ratio: 600 / 76;
+  overflow: visible; pointer-events: none; z-index: -1;
 }
-.surligne__trait path { fill: var(--signal); stroke: none; }
-.js .surligne__trait { animation: trace 1.1s cubic-bezier(.65, 0, .25, 1) .35s both; }
-@keyframes trace { from { clip-path: inset(-50% 100% -50% 0); } to { clip-path: inset(-50% 0 -50% 0); } }
-@media (prefers-reduced-motion: reduce) { .js .surligne__trait { animation: none; } }
+.surligne { isolation: isolate; }
+.surligne__geste {
+  fill: none; stroke: var(--signal); stroke-width: 9; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 1; stroke-dashoffset: 0;
+}
+/* Le geste se dessine comme un vrai trait : vite au départ, ralentit dans le virage, file au retour */
+.js .surligne__geste { animation: geste 1.15s cubic-bezier(.55, .1, .35, 1) .45s both; }
+@keyframes geste { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) { .js .surligne__geste { animation: none; } }
 
 .hero__lead {
   margin-top: 26px; max-width: 520px;
