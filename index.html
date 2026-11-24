@@ -8,7 +8,7 @@
   <script>document.documentElement.classList.add('js');</script>
   <link rel="preload" href="fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/schibsted-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=mouette1">
+  <link rel="stylesheet" href="css/style.css?v=mouette2">
 </head>
 <body>
 
@@ -347,28 +347,28 @@
     <div class="escale__pause" aria-hidden="true"></div>
 
     <!-- ============ MOUETTE (transition) + FONCTIONNEMENT ============ -->
-    <!-- Bloc très haut : l'écran reste figé. La mouette descend du haut de l'écran, la section
-         blanche se déroule derrière elle par-dessus « Pour qui », puis viennent les 4 étapes. -->
+    <!-- Bloc très haut : l'écran reste figé. La mouette descend tout droit du haut de l'écran pendant que
+         la section blanche monte par en dessous, par-dessus « Pour qui ». Puis viennent les 4 étapes. -->
     <div class="phare">
       <div class="phare__stage">
 
-        <!-- La mouette (vue du dessus, 3 images de battement d'ailes). Placée par main.js. -->
-        <svg class="mouette" viewBox="0 0 60 44" aria-hidden="true">
+        <!-- La mouette (vue du dessus, tête vers le bas, 3 images de battement d'ailes). Placée par main.js. -->
+        <svg class="mouette" viewBox="0 0 100 64" aria-hidden="true">
           <g class="mouette__img mouette__img--1">
-            <path class="mouette__aile" d="M26 18 C18 12 8 10 1 13 C8 17 18 21 26 23Z M34 18 C42 12 52 10 59 13 C52 17 42 21 34 23Z"/>
-            <path class="mouette__bout" d="M1 13 C4 12.8 7 13.4 9.5 14.9 C6.5 15.4 3.6 14.5 1 13Z M59 13 C56 12.8 53 13.4 50.5 14.9 C53.5 15.4 56.4 14.5 59 13Z"/>
+            <path class="mouette__aile" d="M46 25 C40 23 32 21 26 21.5 C18 22 10 24 3 28 C11 29 19 30 25 30.5 C33 31 40 32 46 33Z M54 25 C60 23 68 21 74 21.5 C82 22 90 24 97 28 C89 29 81 30 75 30.5 C67 31 60 32 54 33Z"/>
+            <path class="mouette__bout" d="M3 28 C8 25.4 12 24 16 23.3 L17.5 29.6 C12.5 29.2 7.5 28.6 3 28Z M97 28 C92 25.4 88 24 84 23.3 L82.5 29.6 C87.5 29.2 92.5 28.6 97 28Z"/>
           </g>
           <g class="mouette__img mouette__img--2">
-            <path class="mouette__aile" d="M26 18 C20 17 12 18 6 22 C13 23 20 23 26 23Z M34 18 C40 17 48 18 54 22 C47 23 40 23 34 23Z"/>
-            <path class="mouette__bout" d="M6 22 L11.5 19.4 L11.5 22.8Z M54 22 L48.5 19.4 L48.5 22.8Z"/>
+            <path class="mouette__aile" d="M46 25 C40 22 33 19 27 18 C22 17.5 17 18.5 13 20.5 C18 23 23 26 28 27.5 C34 29.5 40 31.5 46 33Z M54 25 C60 22 67 19 73 18 C78 17.5 83 18.5 87 20.5 C82 23 77 26 72 27.5 C66 29.5 60 31.5 54 33Z"/>
+            <path class="mouette__bout" d="M13 20.5 C16 19 19 18.2 22 17.8 L23.5 24.6 C20 23.3 16.5 22 13 20.5Z M87 20.5 C84 19 81 18.2 78 17.8 L76.5 24.6 C80 23.3 83.5 22 87 20.5Z"/>
           </g>
           <g class="mouette__img mouette__img--3">
-            <path class="mouette__aile" d="M26 18 C23 21 19 25 15 31 C20 29 24 26 26 23Z M34 18 C37 21 41 25 45 31 C40 29 36 26 34 23Z"/>
-            <path class="mouette__bout" d="M15 31 L17.4 26.9 L19.8 29.4Z M45 31 L42.6 26.9 L40.2 29.4Z"/>
+            <path class="mouette__aile" d="M46 25 C41 26 35 28 30 31 C25 34 21 38 18 42 C24 40 30 37 35 35 C39 34 43 33.5 46 33Z M54 25 C59 26 65 28 70 31 C75 34 79 38 82 42 C76 40 70 37 65 35 C61 34 57 33.5 54 33Z"/>
+            <path class="mouette__bout" d="M18 42 C20 39.5 22.5 37 25 35 L28.6 37.6 C25 39.2 21.5 40.6 18 42Z M82 42 C80 39.5 77.5 37 75 35 L71.4 37.6 C75 39.2 78.5 40.6 82 42Z"/>
           </g>
-          <path class="mouette__corps" d="M27 9 L33 9 L32.5 13 C34.5 16 34.5 24 33 28 L27 28 C25.5 24 25.5 16 27.5 13Z"/>
-          <circle class="mouette__corps" cx="30" cy="31" r="3.6"/>
-          <path class="mouette__bec" d="M28.8 34.2 L30 37.5 L31.2 34.2Z"/>
+          <path class="mouette__corps" d="M46.5 15 L41 9.5 C45 7.6 55 7.6 59 9.5 L53.5 15 L53 19 C55.5 24 55.5 36 53.5 41 C52.5 44 47.5 44 46.5 41 C44.5 36 44.5 24 47 19Z"/>
+          <circle class="mouette__corps" cx="50" cy="45" r="4.2"/>
+          <path class="mouette__bec" d="M48.6 48.6 L50 53 L51.4 48.6Z"/>
         </svg>
 
         <!-- ============ FONCTIONNEMENT ============ -->
@@ -493,6 +493,6 @@
     <p class="footer__copy">© 2026 SILLAGE</p>
   </footer>
 
-  <script src="js/main.js?v=mouette1"></script>
+  <script src="js/main.js?v=mouette2"></script>
 </body>
 </html>

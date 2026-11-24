@@ -584,29 +584,35 @@ body.menu-open { overflow: hidden; }
 .js .phare__stage.is-on { pointer-events: auto; }
 .phare__anchor { position: absolute; left: 0; top: 120vh; }   /* fin de l'arrivée = début des étapes */
 
-/* Section blanche : déroulée de haut en bas derrière la mouette (clip-path posé par main.js) */
-.js .fonct { position: absolute; inset: 0; z-index: 2; clip-path: inset(0 0 100% 0); }
+/* Section blanche : elle monte par en dessous et passe par-dessus « Pour qui » (translateY posé par main.js) */
+.js .fonct {
+  position: absolute; inset: 0; z-index: 2;
+  transform: translateY(100%); will-change: transform;
+  box-shadow: 0 -18px 40px rgb(4 16 24 / .35);
+}
 /* Son contenu n'apparaît qu'une fois l'écran blanc (--c, 0 → 1) */
 .js .fonct__tete, .js .fonct__etape, .js .fonct__systeme, .js .cap { opacity: var(--c, 0); }
 
 /* La mouette : noir et blanc, 3 images de battement d'ailes en boucle */
 .js .mouette {
   display: block; position: absolute; left: 0; top: 0; z-index: 3;
-  width: 64px; height: 47px; margin: -23px 0 0 -32px;
+  width: 92px; height: 59px; margin: -29px 0 0 -46px;
+  filter: drop-shadow(0 6px 5px rgb(4 16 24 / .22));
   overflow: visible; pointer-events: none; will-change: transform;
   transform: translate(-200px, -200px);
 }
 /* Ailes blanches cernées de noir, bouts noirs : lisible sur le bleu comme sur le blanc */
-.mouette__aile { fill: #fff; stroke: #0b0b0b; stroke-width: 1.3; stroke-linejoin: round; }
+.mouette__aile { fill: #fff; stroke: #0b0b0b; stroke-width: 1.2; stroke-linejoin: round; }
 .mouette__bout { fill: #0b0b0b; }
-.mouette__corps { fill: #fff; stroke: #0b0b0b; stroke-width: 1.3; stroke-linejoin: round; }
+.mouette__corps { fill: #fff; stroke: #0b0b0b; stroke-width: 1.2; stroke-linejoin: round; }
 .mouette__bec { fill: #0b0b0b; }
-.mouette__img { opacity: 0; animation: battement .42s steps(1, end) infinite; }
-.mouette__img--1 { animation-delay: 0s; }
-.mouette__img--2 { animation-delay: -.28s; }
-.mouette__img--3 { animation-delay: -.14s; }
+/* Cycle : ailes hautes (2) → étendues (1) → basses (3) */
+.mouette__img { opacity: 0; animation: battement .5s steps(1, end) infinite; }
+.mouette__img--2 { animation-delay: 0s; }
+.mouette__img--1 { animation-delay: -.333s; }
+.mouette__img--3 { animation-delay: -.167s; }
 @keyframes battement { 0% { opacity: 1; } 33.33% { opacity: 0; } 100% { opacity: 0; } }
-@media (max-width: 860px) { .js .mouette { width: 40px; height: 30px; margin: -15px 0 0 -20px; } }
+@media (max-width: 860px) { .js .mouette { width: 62px; height: 40px; margin: -20px 0 0 -31px; } }
 @media (prefers-reduced-motion: reduce) {
   .mouette__img { animation: none; }
   .mouette__img--1 { opacity: 1; }
@@ -656,8 +662,8 @@ body.menu-open { overflow: hidden; }
 
 /* Nom de l'étape, à gauche de la ligne */
 .fonct__etape {
-  position: absolute; top: var(--py); right: calc(100% - var(--ligne) + 44px);
-  width: min(440px, calc(var(--ligne) - var(--pad) - 44px));
+  position: absolute; top: var(--py); right: calc(100% - var(--ligne) + 68px);
+  width: min(440px, calc(var(--ligne) - var(--pad) - 68px));
   transform: translateY(-50%);
   text-align: right;
 }
@@ -823,7 +829,7 @@ body.menu-open { overflow: hidden; }
 .header__layer--light { transition: opacity .2s; }
 
 @media (max-width: 860px) {
-  .fonct { --ligne: 28px; --ecart: 22px; --py: 60%; }
+  .fonct { --ligne: 34px; --ecart: 26px; --py: 60%; }
   .fonct__tete { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .fonct__etape {
     top: 0; left: 0; right: 0; z-index: 2;

@@ -314,8 +314,8 @@
   function layoutGrid() {
     var mobile = PW <= 860;
     var nCols = mobile ? 5 : 8, rows = TOTAL / nCols, gap = mobile ? 8 : 12;
-    lineX = mobile ? 28 : PW * 0.42;
-    var ecart = mobile ? 22 : 56;
+    lineX = mobile ? 34 : PW * 0.42;
+    var ecart = mobile ? 26 : 56;
     var originRow = mobile ? 3 : 2;
     var dotY = PH * (mobile ? 0.6 : 0.5);
     var availW = PW - lineX - ecart - (mobile ? 20 : 40);
@@ -402,30 +402,27 @@
   var capY = 0;
 
   // L'arrivée (f de 0 à 1, pendant que l'écran est figé) :
-  // 1. la mouette entre par le haut, au centre, et descend jusqu'à sa place sur la ligne directrice ;
-  // 2. derrière elle, l'écran devient blanc : la section blanche se déroule par-dessus « Pour qui »
-  //    (et recouvre le phare) ; une fois la mouette posée, le blanc finit de couler jusqu'en bas ;
+  // 1. la mouette entre par le haut et descend tout droit, sur l'axe de la ligne directrice,
+  //    jusqu'à sa place (celle de l'ancien bateau) ;
+  // 2. en même temps, la section blanche monte par en dessous et passe par-dessus « Pour qui »
+  //    (et par-dessus le phare) ;
   // 3. le contenu de la section apparaît.
   function renderArrivee(f) {
-    var a = smooth(0.04, 0.62, f);                      // descente de la mouette
-    var y0 = -40;
-    var gy = y0 + (capY - y0) * a;
-    var gx = PW / 2 + (lineX - PW / 2) * a;             // part du centre de l'écran et glisse vers la ligne directrice
-    mouette.style.transform = 'translate(' + gx.toFixed(1) + 'px,' + gy.toFixed(1) + 'px)';
+    var y0 = -50;
+    var gy = y0 + (capY - y0) * smooth(0.04, 0.72, f);
+    mouette.style.transform = 'translate(' + lineX.toFixed(1) + 'px,' + gy.toFixed(1) + 'px)';
     mouette.style.visibility = f > 0 ? 'visible' : 'hidden';
 
-    // Bord du blanc : juste derrière la mouette, puis jusqu'en bas de l'écran
-    var edge = Math.max(0, gy - 18);
-    edge += (PH - edge) * smooth(0.64, 0.9, f);
-    if (f <= 0) edge = 0;
-    fonct.style.clipPath = edge >= PH - 0.5 ? 'none' : 'inset(0 0 ' + (PH - edge).toFixed(1) + 'px 0)';
-    phareIn.style.clipPath = edge > 0 ? 'inset(' + edge.toFixed(1) + 'px 0 0 0)' : '';
+    // Haut de la section blanche : de tout en bas (PH) à tout en haut (0)
+    var top = PH * (1 - smooth(0.16, 0.74, f));
+    fonct.style.transform = top > 0.5 ? 'translateY(' + top.toFixed(1) + 'px)' : 'none';
+    phareIn.style.clipPath = top < PH ? 'inset(0 0 ' + (PH - top).toFixed(1) + 'px 0)' : '';
 
-    fonct.style.setProperty('--c', smooth(0.84, 1, f).toFixed(3));
+    fonct.style.setProperty('--c', smooth(0.78, 0.96, f).toFixed(3));
     cap.style.setProperty('--by', capY.toFixed(1) + 'px');
-    pStage.classList.toggle('is-on', edge > PH * 0.5);
+    pStage.classList.toggle('is-on', top < PH * 0.5);
     // Menu en encre sur le blanc, de nouveau clair quand la section Rendez-vous (sombre) arrive
-    header.classList.toggle('header--ink', edge > 38 && rdv.getBoundingClientRect().top > 38);
+    header.classList.toggle('header--ink', top < 38 && rdv.getBoundingClientRect().top > 38);
   }
 
   // Les étapes : le texte change, les graduations défilent, les cases se remplissent.
