@@ -158,14 +158,12 @@ body.menu-open { overflow: hidden; }
   padding: calc(var(--header-h) + 16px) var(--pad) 96px;
   display: flex; flex-direction: column; justify-content: center;
   overflow: hidden;
-  /* Blanc cassé à peine bleuté, comme une eau très claire */
-  background:
-    radial-gradient(60% 55% at 78% 58%, rgb(214 230 236 / .55), transparent 70%),
-    radial-gradient(45% 40% at 12% 18%, rgb(222 235 238 / .5), transparent 70%),
-    linear-gradient(180deg, #f4f3ee 0%, #eff2f0 100%);
+  /* Couleur de secours (et des copies du hero dans le sillage) : eau claire sur fond pâle */
+  background: #e9f1f0;
 }
-/* Ondes au passage de la souris (dessinées en basse résolution puis lissées par l'agrandissement) */
-.hero__eau { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+/* Eau claire vue d'en haut, rendue en WebGL par js/eau.js (caustiques + vagues sous la souris) */
+.hero__eau { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity .8s ease; }
+.hero__eau.is-ready { opacity: 1; }
 
 /* Carte marine en fond */
 .hero__chart {

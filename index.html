@@ -8,7 +8,7 @@
   <script>document.documentElement.classList.add('js');</script>
   <link rel="preload" href="fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/schibsted-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=eau1">
+  <link rel="stylesheet" href="css/style.css?v=eau2">
 </head>
 <body>
 
@@ -119,7 +119,7 @@
         <!-- ============ HERO ============ -->
         <section class="hero" aria-labelledby="hero-titre">
 
-          <!-- Fond aquatique très léger : réagit au passage de la souris (ondes dessinées par main.js) -->
+          <!-- Fond : eau claire vue d'en haut (js/eau.js). Sans WebGL, la couleur de fond du hero reste. -->
           <canvas class="hero__eau" aria-hidden="true"></canvas>
 
           <!-- Fond : carte marine (lignes de fond + sondes) -->
@@ -496,6 +496,7 @@
     <p class="footer__copy">© 2026 SILLAGE</p>
   </footer>
 
-  <script src="js/main.js?v=eau1"></script>
+  <script src="js/main.js?v=eau2"></script>
+  <script src="js/eau.js?v=eau2"></script>
 </body>
 </html>
