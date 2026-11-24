@@ -175,7 +175,7 @@
           </svg>
 
           <div class="hero__content">
-            <h1 id="hero-titre">Soyez la réponse que donnent les&nbsp;IA.</h1>
+            <h1 id="hero-titre">Soyez <span class="surligne">la réponse<svg class="surligne__trait" viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path class="surligne__a" d="M4 15 C 70 7, 170 4, 296 9"/><path class="surligne__b" d="M40 21 C 110 15, 190 13, 284 16"/></svg></span> que donnent les&nbsp;IA.</h1>
             <p class="hero__lead">Vos clients ne cherchent plus, ils demandent. SILLAGE positionne votre marque là où se forment désormais les réponses&nbsp;: ChatGPT, Claude, Gemini, Perplexity.</p>
             <div class="hero__actions">
               <a class="btn btn--primary" href="#audit">Demander un audit GEO</a>
@@ -204,31 +204,87 @@
         <canvas class="wake__lines" aria-hidden="true"></canvas> <!-- lignes d'écume -->
 
         <!-- ============ RÉSULTATS (dans le sillage) ============ -->
-        <!-- Chiffres réels : cas client nautisme haut de gamme (anonymisé), relevés du 14/09 au 26/10/2026. -->
+        <!-- Chiffres réels : cas client nautisme haut de gamme (anonymisé), relevés du 14/09 au 26/10/2026.
+             Seuls le départ (≈ 692 / 6) et l'arrivée (692) sont connus : la courbe entre les deux est indicative. -->
         <section class="wake__content resultats" aria-labelledby="resultats-titre">
           <div class="resultats__inner">
-            <h2 id="resultats-titre">Des résultats qui se&nbsp;mesurent.</h2>
+            <div class="resultats__tete">
+              <h2 id="resultats-titre">Des résultats qui se&nbsp;mesurent.</h2>
+              <p class="resultats__cas"><span class="pastille">Cas client</span> Marque du nautisme haut de gamme · 7&nbsp;semaines</p>
+            </div>
 
-            <ul class="stats">
-              <li class="stat">
-                <p class="stat__num"><small>×</small><span data-count="6">6</span></p>
-                <p class="stat__label">de citations par les IA en 7&nbsp;semaines, jusqu'à 692 citations relevées.</p>
-              </li>
-              <li class="stat">
-                <p class="stat__num"><span data-count="35.4" data-decimals="1">35,4</span><small>%</small></p>
-                <p class="stat__label">des réponses des IA citent désormais la marque.</p>
-              </li>
-              <li class="stat">
-                <p class="stat__num"><span data-count="44.9" data-decimals="1">44,9</span><small>%</small></p>
-                <p class="stat__label">de part de voix&nbsp;: 1<sup>re</sup> de son marché, devant ses trois concurrents.</p>
-              </li>
-              <li class="stat">
-                <p class="stat__num"><span data-count="82">82</span><small>/100</small></p>
-                <p class="stat__label">de ton favorable dans ce que les IA disent d'elle.</p>
-              </li>
-            </ul>
+            <div class="kpis">
 
-            <p class="resultats__note">Cas réel · marque du nautisme haut de gamme · relevés du 14&nbsp;septembre au 26&nbsp;octobre 2026 sur ChatGPT, Claude, Gemini et Perplexity. Un résultat passé ne garantit pas un résultat futur.</p>
+              <!-- Carte 1 : citations -->
+              <article class="kpi kpi--citations" data-kpi>
+                <div class="kpi__haut">
+                  <p class="kpi__titre">Citations par les IA</p>
+                  <p class="badge badge--hausse"><span>×6 depuis le départ</span></p>
+                </div>
+                <p class="kpi__valeur"><span data-count="692">692</span></p>
+                <p class="kpi__sous">citations relevées en semaine&nbsp;7</p>
+                <div class="courbe" aria-hidden="true">
+                <svg class="courbe__svg" viewBox="0 0 400 130" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="courbe-fond" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#e4572e" stop-opacity=".28"/>
+                      <stop offset="1" stop-color="#e4572e" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path class="courbe__grille" d="M0 32.5H400M0 65H400M0 97.5H400"/>
+                  <g class="courbe__trace">
+                    <path class="courbe__aire" d="M0 112 C 120 108, 230 88, 300 52 S 380 14, 400 10 V130 H0Z" fill="url(#courbe-fond)"/>
+                    <path class="courbe__ligne" d="M0 112 C 120 108, 230 88, 300 52 S 380 14, 400 10"/>
+                  </g>
+                </svg>
+                <span class="courbe__point"></span>
+                </div>
+                <div class="courbe__axe"><span>Semaine 1</span><span>Semaine 7</span></div>
+              </article>
+
+              <!-- Carte 2 : part de voix -->
+              <article class="kpi kpi--voix" data-kpi>
+                <div class="kpi__haut">
+                  <p class="kpi__titre">Part de voix dans les IA</p>
+                  <p class="badge badge--rang"><span>1<sup>re</sup> de son marché</span></p>
+                </div>
+                <ul class="barres">
+                  <li class="barre barre--marque" style="--v:44.9"><span class="barre__nom">La marque</span><span class="barre__piste"><span class="barre__rempli"></span></span><span class="barre__val"><span data-count="44.9" data-decimals="1">44,9</span>&nbsp;%</span></li>
+                  <li class="barre" style="--v:25.2"><span class="barre__nom">Concurrent A</span><span class="barre__piste"><span class="barre__rempli"></span></span><span class="barre__val">25,2&nbsp;%</span></li>
+                  <li class="barre" style="--v:15.7"><span class="barre__nom">Concurrent B</span><span class="barre__piste"><span class="barre__rempli"></span></span><span class="barre__val">15,7&nbsp;%</span></li>
+                  <li class="barre" style="--v:9.1"><span class="barre__nom">Concurrent C</span><span class="barre__piste"><span class="barre__rempli"></span></span><span class="barre__val">9,1&nbsp;%</span></li>
+                </ul>
+              </article>
+
+              <!-- Carte 3 : taux de citation -->
+              <article class="kpi kpi--taux" data-kpi>
+                <p class="kpi__titre">Réponses qui la citent</p>
+                <div class="anneau">
+                  <svg viewBox="0 0 100 100" aria-hidden="true">
+                    <circle class="anneau__fond" cx="50" cy="50" r="42"/>
+                    <circle class="anneau__val" cx="50" cy="50" r="42" pathLength="100" style="--v:35.4"/>
+                  </svg>
+                  <p class="anneau__chiffre"><span data-count="35.4" data-decimals="1">35,4</span><small>%</small></p>
+                </div>
+                <p class="kpi__sous">Recommandée sur <strong>2 questions clés sur&nbsp;3</strong></p>
+              </article>
+
+              <!-- Carte 4 : ton -->
+              <article class="kpi kpi--ton" data-kpi>
+                <p class="kpi__titre">Ton des réponses</p>
+                <div class="jauge">
+                  <svg viewBox="0 0 120 66" aria-hidden="true">
+                    <path class="jauge__fond" d="M10 60 A50 50 0 0 1 110 60"/>
+                    <path class="jauge__val" pathLength="100" d="M10 60 A50 50 0 0 1 110 60" style="--v:82"/>
+                  </svg>
+                  <p class="jauge__chiffre"><span data-count="82">82</span><small>/100</small></p>
+                </div>
+                <p class="kpi__sous">Ce que les IA disent d'elle est <strong>favorable</strong></p>
+              </article>
+
+            </div>
+
+            <p class="resultats__note">Relevés du 14&nbsp;septembre au 26&nbsp;octobre 2026 sur ChatGPT, Claude, Gemini et Perplexity. Courbe indicative entre le premier et le dernier relevé. Un résultat passé ne garantit pas un résultat futur.</p>
           </div>
         </section>
         <!-- ============ FIN RÉSULTATS ============ -->

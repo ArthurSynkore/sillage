@@ -236,19 +236,25 @@
     if (!raf) raf = requestAnimationFrame(frame);
   }
 
-  // ---------- 3. Compteurs ----------
-  var counters = Array.prototype.slice.call(document.querySelectorAll('[data-count]'));
-  var lastP = -1;
+  // ---------- 3. Résultats : cartes, graphiques et compteurs ----------
+  // Chaque carte avance avec le défilement, avec un léger décalage entre elles.
+  // --p (0 → 1) pilote en CSS la courbe, les barres, l'anneau et la jauge.
+  var cards = Array.prototype.slice.call(document.querySelectorAll('[data-kpi]')).map(function (el) {
+    return { el: el, counters: Array.prototype.slice.call(el.querySelectorAll('[data-count]')) };
+  });
+  var lastT = -1;
 
-  // Les chiffres montent avec le défilement, pendant que le sillage les découvre.
   function updateCounters() {
-    var p = reduceMotion ? 1 : smooth(0.08, 0.72, t);
-    if (p === lastP) return;
-    lastP = p;
-    counters.forEach(function (el) {
-      var dec = parseInt(el.dataset.decimals || '0', 10);
-      el.textContent = (parseFloat(el.dataset.count) * p)
-        .toLocaleString('fr-FR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+    if (t === lastT) return;
+    lastT = t;
+    cards.forEach(function (c, k) {
+      var p = reduceMotion ? 1 : smooth(0.14 + 0.07 * k, 0.62 + 0.07 * k, t);
+      c.el.style.setProperty('--p', p.toFixed(4));
+      c.counters.forEach(function (el) {
+        var dec = parseInt(el.dataset.decimals || '0', 10);
+        el.textContent = (parseFloat(el.dataset.count) * p)
+          .toLocaleString('fr-FR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+      });
     });
   }
 
