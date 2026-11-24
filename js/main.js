@@ -455,7 +455,13 @@
           totals[type === 'faq' || type === 'data' || type === 'video' ? 'format' : type]++;
         }
       });
-      Object.keys(totals).forEach(function (key) { compteurs[key].textContent = totals[key]; });
+      Object.keys(totals).forEach(function (key) {
+        var el = compteurs[key], v = String(totals[key]);
+        if (el.textContent === v) return;
+        el.textContent = v;
+        // Petit grossissement quand le chiffre change
+        el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+      });
     }
   }
 

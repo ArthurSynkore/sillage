@@ -494,6 +494,48 @@ body.menu-open { overflow: hidden; }
   .kpi--taux .kpi__sous, .kpi--ton .kpi__sous { font-size: 11.5px; padding-top: 6px; }
   .resultats__note { font-size: 10.5px; margin-top: 8px; }
 }
+/* ---- Résultats sur téléphone : façon widgets d'app ---- */
+.voix, .cas-court, .note-court { display: none; }
+@media (max-width: 640px) {
+  .cas-long, .note-long { display: none; }
+  .cas-court, .note-court { display: inline; }
+  .resultats h2 { font-size: 27px; }
+  .kpis { grid-template-areas: "cit cit" "voix voix" "taux ton"; gap: 10px; margin-top: 14px; }
+  .kpi { border: 0; border-radius: 22px; background: rgb(245 242 234 / .075); padding: 14px 16px; }
+  .kpi:hover { background: rgb(245 242 234 / .075); }
+  .kpi__titre { font-size: 12.5px; font-weight: 600; color: rgb(245 242 234 / .6); }
+  /* Citations : chiffre en grand, courbe sur toute la largeur dessous */
+  .kpi--citations { display: flex; }
+  .kpi--citations .kpi__valeur { font-size: 46px; margin-top: 4px; }
+  .kpi--citations .kpi__sous { display: none; }
+  .kpi--citations .courbe { height: 54px; min-height: 0; flex: none; margin-top: 6px; }
+  .kpi--citations .courbe__axe { display: flex; font-size: 10.5px; margin-top: 4px; }
+  /* Part de voix : une barre segmentée + légende en 2 × 2 */
+  .barres { display: none; }
+  .voix { display: block; margin-top: 12px; }
+  .voix__barre { display: flex; gap: 3px; height: 12px; }
+  .voix__part {
+    flex: var(--v) 0 0; border-radius: 4px; background: rgb(245 242 234 / .22);
+    transform: scaleX(var(--p)); transform-origin: left;
+  }
+  .voix__part:nth-child(3) { background: rgb(245 242 234 / .15); }
+  .voix__part:nth-child(4) { background: rgb(245 242 234 / .1); }
+  .voix__part--marque { background: var(--signal); }
+  .voix__legende { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin: 10px 0 0; padding: 0; list-style: none; }
+  .voix__item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: rgb(245 242 234 / .6); white-space: nowrap; }
+  .voix__item i { width: 8px; height: 8px; border-radius: 2px; background: rgb(245 242 234 / .22); flex: none; }
+  .voix__item:nth-child(3) i { background: rgb(245 242 234 / .15); }
+  .voix__item:nth-child(4) i { background: rgb(245 242 234 / .1); }
+  .voix__item b { margin-left: auto; font-weight: 600; color: rgb(245 242 234 / .85); }
+  .voix__item--marque { color: var(--foam); font-weight: 600; }
+  .voix__item--marque i { background: var(--signal); }
+  .voix__item--marque b { color: var(--foam); }
+  /* Anneau et jauge : centrés */
+  .kpi--taux .kpi__titre, .kpi--ton .kpi__titre { text-align: center; }
+  .kpi--taux .kpi__sous, .kpi--ton .kpi__sous { font-size: 11.5px; }
+  .resultats__note { font-size: 10.5px; }
+}
+
 /* Petits téléphones (hauteur réduite) : on garde l'essentiel */
 @media (max-width: 640px) and (max-height: 760px) {
   .resultats h2 { font-size: 24px; }
@@ -906,8 +948,17 @@ body.menu-open { overflow: hidden; }
     background: linear-gradient(var(--paper) 78%, rgb(245 242 234 / 0));
   }
   .fonct__phrases { margin-top: 10px; }
-  .fonct__compteurs { margin-top: 14px; justify-content: flex-start; gap: 6px 16px; font-size: 10px; }
+  /* Compteurs : juste l'icône et le chiffre, plus gros, serrés sur une ligne */
+  .fonct__compteurs { margin-top: 14px; justify-content: flex-start; flex-wrap: nowrap; gap: 18px; font-size: 16px; }
+  .fonct__compteurs li { gap: 6px; }
+  .fonct__compteurs svg { width: 19px; height: 19px; }
+  .fonct__compteurs b { min-width: 0; text-align: left; font-weight: 600; }
+  .compteur__nom { display: none; }
 }
+.fonct__compteurs b { display: inline-block; }
+.fonct__compteurs b.pop { animation: pop .35s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .fonct__compteurs b.pop { animation: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

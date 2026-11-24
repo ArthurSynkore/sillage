@@ -8,7 +8,7 @@
   <script>document.documentElement.classList.add('js');</script>
   <link rel="preload" href="fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/schibsted-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=mobile4">
+  <link rel="stylesheet" href="css/style.css?v=mobile5">
 </head>
 <body>
 
@@ -216,7 +216,7 @@
           <div class="resultats__inner">
             <div class="resultats__tete">
               <h2 id="resultats-titre">Des résultats qui se&nbsp;mesurent.</h2>
-              <p class="resultats__cas"><span class="pastille">Cas client</span> Marque du nautisme haut de gamme · 7&nbsp;semaines</p>
+              <p class="resultats__cas"><span class="pastille">Cas client</span> <span class="cas-long">Marque du nautisme haut de gamme · 7&nbsp;semaines</span><span class="cas-court">Nautisme haut de gamme · 7&nbsp;sem.</span></p>
             </div>
 
             <div class="kpis">
@@ -254,6 +254,21 @@
                   <p class="kpi__titre">Part de voix dans les IA</p>
                   <p class="badge badge--rang"><span>1<sup>re</sup> de son marché</span></p>
                 </div>
+                <!-- Téléphone : une seule barre découpée en parts + légende -->
+                <div class="voix" aria-hidden="true">
+                  <div class="voix__barre">
+                    <span class="voix__part voix__part--marque" style="--v:44.9"></span>
+                    <span class="voix__part" style="--v:25.2"></span>
+                    <span class="voix__part" style="--v:15.7"></span>
+                    <span class="voix__part" style="--v:9.1"></span>
+                  </div>
+                  <ul class="voix__legende">
+                    <li class="voix__item voix__item--marque"><i></i>La marque <b>44,9&nbsp;%</b></li>
+                    <li class="voix__item"><i></i>Concurrent A <b>25,2&nbsp;%</b></li>
+                    <li class="voix__item"><i></i>Concurrent B <b>15,7&nbsp;%</b></li>
+                    <li class="voix__item"><i></i>Concurrent C <b>9,1&nbsp;%</b></li>
+                  </ul>
+                </div>
                 <ul class="barres">
                   <li class="barre barre--marque" style="--v:44.9"><span class="barre__nom">La marque</span><span class="barre__piste"><span class="barre__rempli"></span></span><span class="barre__val"><span data-count="44.9" data-decimals="1">44,9</span>&nbsp;%</span></li>
                   <li class="barre" style="--v:25.2"><span class="barre__nom">Concurrent A</span><span class="barre__piste"><span class="barre__rempli"></span></span><span class="barre__val">25,2&nbsp;%</span></li>
@@ -290,7 +305,7 @@
 
             </div>
 
-            <p class="resultats__note">Relevés du 14&nbsp;septembre au 26&nbsp;octobre 2026 sur ChatGPT, Claude, Gemini et Perplexity. Courbe indicative entre le premier et le dernier relevé. Un résultat passé ne garantit pas un résultat futur.</p>
+            <p class="resultats__note"><span class="note-long">Relevés du 14&nbsp;septembre au 26&nbsp;octobre 2026 sur ChatGPT, Claude, Gemini et Perplexity. Courbe indicative entre le premier et le dernier relevé. Un résultat passé ne garantit pas un résultat futur.</span><span class="note-court">Relevés du 14/09 au 26/10/2026. Courbe indicative. Un résultat passé ne garantit pas un résultat futur.</span></p>
           </div>
         </section>
         <!-- ============ FIN RÉSULTATS ============ -->
@@ -399,10 +414,10 @@
               <li data-nom="Référence">Les IA vous citent, vos clients vous trouvent.</li>
             </ol>
             <ul class="fonct__compteurs">
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-article"/></svg><b data-compteur="article">0</b> Articles</li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-faq"/></svg><b data-compteur="format">0</b> Formats</li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ia"/></svg><b data-compteur="ia">0</b> Citations IA</li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-person"/></svg><b data-compteur="person">0</b> Visiteurs</li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-article"/></svg><b data-compteur="article">0</b><span class="compteur__nom"> Articles</span></li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-faq"/></svg><b data-compteur="format">0</b><span class="compteur__nom"> Formats</span></li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ia"/></svg><b data-compteur="ia">0</b><span class="compteur__nom"> Citations IA</span></li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-person"/></svg><b data-compteur="person">0</b><span class="compteur__nom"> Visiteurs</span></li>
             </ul>
           </div>
 
@@ -498,6 +513,6 @@
     <p class="footer__copy">© 2026 SILLAGE</p>
   </footer>
 
-  <script src="js/main.js?v=mobile4"></script>
+  <script src="js/main.js?v=mobile5"></script>
 </body>
 </html>
