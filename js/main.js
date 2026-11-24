@@ -400,6 +400,7 @@
     fcv.width = Math.round(FW * pDpr);
     fcv.height = Math.round(FH * pDpr);
     escale.style.setProperty('--pq-h', pourqui.offsetHeight + 'px');
+    measurePourqui();
     flashSpan = pAnchor.offsetTop;
     pTotal = phare.offsetHeight - PH;
     layoutGrid();
@@ -672,8 +673,50 @@
     });
   })();
 
+  // ---------- 6. Pour qui : épinglage + textes qui s'assoient ----------
+  // La section se fige au centre de l'écran (ou en bas si elle est plus haute que l'écran)
+  // pendant PAUSE × hauteur d'écran, avant l'éclat du phare. Pendant ce temps, titres et
+  // lignes se posent un par un. L'animation suit le défilement : elle s'inverse si on remonte.
+  var PAUSE = 0.8;
+  var pause = escale.querySelector('.escale__pause');
+  var assis = [];
+  (function () {
+    var cols = pourqui.querySelectorAll('.pourqui__col');
+    var liste = [{ el: pourqui.querySelector('h2'), delai: 0 }];
+    cols.forEach(function (col, c) {
+      liste.push({ el: col, delai: c * 40, cadre: true });
+      liste.push({ el: col.querySelector('h3'), delai: c * 40 + 20 });
+      col.querySelectorAll('li').forEach(function (li) { liste.push({ el: li, delai: c * 40 + 30 }); });
+    });
+    assis = liste;
+  })();
+
+  function measurePourqui() {
+    var vh = window.innerHeight, h = pourqui.offsetHeight;
+    var top = h <= vh ? (vh - h) / 2 : vh - h;      // centré si possible, sinon aligné en bas
+    escale.style.setProperty('--pq-top', top + 'px');
+    pause.style.height = Math.round(PAUSE * vh + Math.max(0, (vh - h) / 2)) + 'px';
+    var base = pourqui.getBoundingClientRect().top;
+    assis.forEach(function (o) { o.y = o.el.getBoundingClientRect().top - base; });
+  }
+
+  var lastPq = null;
+  function updatePourqui() {
+    var vh = window.innerHeight;
+    var y0 = escale.getBoundingClientRect().top;   // position « libre », comme si rien n'était épinglé
+    var key = Math.round(y0);
+    if (key === lastPq) return;
+    lastPq = key;
+    assis.forEach(function (o) {
+      // L'élément se pose quand sa position libre passe de 92 % à 62 % de la hauteur d'écran.
+      var y = y0 + o.y + o.delai;
+      var r = reduceMotion ? 1 : 1 - smooth(0.62 * vh, 0.92 * vh, y);
+      o.el.style.setProperty('--r', r.toFixed(3));
+    });
+  }
+
   // ---------- Démarrage ----------
-  function onScroll() { update(); updatePhare(); }
+  function onScroll() { update(); updatePourqui(); updatePhare(); }
   function onResize() { measure(); measurePhare(); onScroll(); }
 
   measure();

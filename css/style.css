@@ -516,6 +516,36 @@ body.menu-open { overflow: hidden; }
   .pourqui__cols { grid-template-columns: 1fr; }
 }
 
+/* Avec JavaScript, la section occupe un écran et son contenu est centré : elle peut être épinglée au milieu */
+.js .pourqui {
+  min-height: 100vh; min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding-top: calc(var(--header-h) + 8px); padding-bottom: 28px;
+}
+.js .pourqui__inner { width: 100%; }
+.js .pourqui__cols { margin-top: clamp(20px, 4vh, 56px); }
+.js .pourqui__liste { margin-top: clamp(10px, 1.6vh, 24px); }
+.js .pourqui__liste li { padding: clamp(9px, 1.55vh, 16px) 0; }
+
+/* Les textes « s'assoient » : ils descendent de quelques pixels et se posent.
+   --r (0 → 1) est donné par main.js selon le défilement. Sans JavaScript : tout est visible. */
+.js .pourqui h2, .js .pourqui h3, .js .pourqui__liste li {
+  opacity: var(--r, 1);
+  transform: translateY(calc((1 - var(--r, 1)) * -14px));
+  will-change: opacity, transform;
+}
+.js .pourqui__liste li { transform: translateY(calc((1 - var(--r, 1)) * -10px)); }
+/* Le trait de séparation se trace de gauche à droite */
+.js .pourqui__liste li { border-top-color: transparent; position: relative; }
+.js .pourqui__liste li::after {
+  content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px;
+  background: rgb(11 34 49 / .14);
+  transform: scaleX(var(--r, 1)); transform-origin: left;
+}
+.js .pourqui__col--non .pourqui__liste li::after { background: rgb(245 242 234 / .16); }
+/* Les cadres apparaissent en fondu, un peu avant leur contenu */
+.js .pourqui__col { opacity: calc(.2 + var(--r, 1) * .8); }
+
 /* ---------- 9. Phare (transition) ----------
    « Pour qui » se fige quand son bas touche le bas de l'écran (--pq-h = sa hauteur, posée par main.js).
    Le bloc .phare le recouvre alors : éclat du phare, puis section Fonctionnement. */
@@ -537,7 +567,10 @@ body.menu-open { overflow: hidden; }
 }
 
 .js .escale { position: relative; }
-.js .pourqui { position: sticky; top: calc(100vh - var(--pq-h, 100vh)); top: calc(100svh - var(--pq-h, 100svh)); z-index: 0; }
+.js .pourqui { position: sticky; top: var(--pq-top, calc(100vh - var(--pq-h, 100vh))); z-index: 0; }
+/* Pause d'épinglage (hauteur posée par main.js) */
+.escale__pause { display: none; }
+.js .escale__pause { display: block; }
 .js .phare {
   position: relative; z-index: 1;
   margin-top: -100vh; margin-top: -100svh;
