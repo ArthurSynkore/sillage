@@ -40,7 +40,7 @@
 /* ---------- 2. Base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-anchor: none; }
 
 body {
   margin: 0;
@@ -237,10 +237,66 @@ body.menu-open { overflow: hidden; }
 .moteur__logo { width: 17px; height: 17px; flex: none; opacity: .9; }
 
 
+.lead-court, .ias { display: none; }
+
+/* Téléphone : moins de texte, pas de boussole, un visuel des IA à la place */
 @media (max-width: 860px) {
-  .compass { top: auto; bottom: 8%; right: -32vw; width: 86vw; transform: none; opacity: .22; }
-  .hero { padding-bottom: 110px; }
+  .compass { display: none; }
+  .hero { padding-bottom: 28px; justify-content: center; }
+  .lead-long { display: none; }
+  .lead-court { display: inline; }
+  .hero__lead { font-size: 17px; margin-top: 14px; }
+  .hero__actions { margin-top: 20px; }
+
+  .hero__bas { display: none; }   /* les logos sont déjà dans les tuiles */
+  .ias { display: block; margin-top: 30px; max-width: 380px; }
+  .ias__tuiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .tuile {
+    aspect-ratio: 1; border-radius: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    font-size: 10.5px; font-weight: 600; color: var(--ink);
+    border: 1px solid rgb(11 34 49 / .08);
+    animation: tuile .5s cubic-bezier(.2, .8, .2, 1) both;
+    animation-delay: calc(.25s + var(--k) * .09s);
+  }
+  .tuile__logo { width: 24px; height: 24px; }
+  /* Couleurs tertiaires, très douces, une par IA */
+  .tuile--gpt { background: #e3eee8; }
+  .tuile--claude { background: #f4e5d6; }
+  .tuile--gemini { background: #e2e9f4; }
+  .tuile--perplexity { background: #e2eef0; }
+
+  .ias__fleches { display: block; width: 100%; height: 52px; color: rgb(11 34 49 / .45); overflow: visible; }
+  .ias__fleches path { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .ias__fleches > path { animation: fleche .7s ease both; animation-delay: calc(.7s + var(--k) * .08s); }
+
+  .ias__cible {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin: 4px auto 0; padding: 11px 16px; border-radius: 999px;
+    background: #fff; border: 1.5px solid var(--signal);
+    font-size: 14px; font-weight: 600; color: var(--ink);
+    box-shadow: 0 6px 18px rgb(11 34 49 / .08);
+    animation: tuile .5s cubic-bezier(.2, .8, .2, 1) 1.15s both;
+  }
+  .ias__ok {
+    display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--signal); color: #fff; font-size: 12px; line-height: 1;
+  }
 }
+/* Petits téléphones : visuel plus compact pour tout tenir dans l'écran */
+@media (max-width: 860px) and (max-height: 760px) {
+  .hero h1 { font-size: 38px; }
+  .hero__actions { margin-top: 16px; }
+  .ias { margin-top: 18px; }
+  .ias__tuiles { gap: 8px; }
+  .tuile { font-size: 9.5px; border-radius: 12px; gap: 4px; }
+  .tuile__logo { width: 20px; height: 20px; }
+  .ias__fleches { height: 34px; }
+  .ias__cible { padding: 9px 14px; font-size: 13px; }
+}
+@keyframes tuile { from { opacity: 0; transform: translateY(10px) scale(.94); } to { opacity: 1; transform: none; } }
+@keyframes fleche { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .tuile, .ias__fleches > path, .ias__cible { animation: none; } }
 @media (max-height: 600px) {
   .hero__bas { display: none; }
   .hero h1 { margin-top: 16px; font-size: clamp(36px, 6vw, 64px); }
@@ -253,10 +309,10 @@ body.menu-open { overflow: hidden; }
 .voyage { position: relative; }
 .wake__rim, .wake__water, .wake__lines, .boat { display: none; }
 
-.js .voyage { height: calc(100vh + 220vh); height: calc(100svh + 220vh); }
+.js .voyage { height: calc(100vh + 220vh); height: calc(100lvh + 220vh); }
 .js .voyage__stage {
   position: sticky; top: 0;
-  height: 100vh; height: 100svh;
+  height: 100vh; height: 100lvh;   /* grande hauteur d'écran : rien ne dépasse quand la barre d'adresse se cache */
   overflow: hidden;
 }
 .js .hero { position: absolute; inset: 0; min-height: 0; }
@@ -274,6 +330,10 @@ body.menu-open { overflow: hidden; }
 .js .wake__water { z-index: 2; }
 .js .wake__water > .hero { filter: url(#eau) blur(9px) saturate(130%); }
 .js .wake__water::after { background: rgb(var(--sea-rgb) / var(--alpha, .72)); }
+@media (max-width: 860px) {
+  .js .wake__rim { background: #e9ece8; }
+  .js .wake__water { background: var(--paper); }
+}
 .js .wake__lines { z-index: 3; width: 100%; height: 100%; clip-path: none; pointer-events: none; }
 .js .wake__content { z-index: 4; }
 
@@ -288,7 +348,7 @@ body.menu-open { overflow: hidden; }
 .boat__mat { fill: var(--signal); }
 
 /* Ancre du lien « Résultats » : positionnée à la fin de la traversée */
-.voyage__anchor { position: absolute; left: 0; bottom: 100vh; bottom: 100svh; }
+.voyage__anchor { position: absolute; left: 0; bottom: 100vh; bottom: 100lvh; }
 
 /* ---------- 7. Résultats ----------
    Chaque carte reçoit --p (0 → 1) depuis main.js : barres, courbe, anneau,
@@ -578,12 +638,12 @@ body.menu-open { overflow: hidden; }
 .js .escale__pause { display: block; }
 .js .phare {
   position: relative; z-index: 1;
-  margin-top: -100vh; margin-top: -100svh;
-  height: calc(100vh + 420vh); height: calc(100svh + 420vh);   /* 120vh d'arrivée de la mouette + 300vh d'étapes */
+  margin-top: -100vh; margin-top: -100lvh;
+  height: calc(100vh + 420vh); height: calc(100lvh + 420vh);   /* 120vh d'arrivée de la mouette + 300vh d'étapes */
 }
 .js .phare__stage {
   position: sticky; top: 0;
-  height: 100vh; height: 100svh;
+  height: 100vh; height: 100lvh;
   overflow: hidden; pointer-events: none;
 }
 .js .phare__stage.is-on { pointer-events: auto; }

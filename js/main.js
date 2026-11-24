@@ -46,7 +46,9 @@
   var ctx = canvas.getContext('2d');
 
   // L'eau du sillage est une copie du hero, déformée et floutée en CSS.
-  [rim, water].forEach(function (layer) {
+  // Sur téléphone, c'est trop lourd (flou + déformation plein écran) : on garde des aplats de couleur.
+  var petitEcran = window.matchMedia('(max-width: 860px)').matches;
+  if (!petitEcran) [rim, water].forEach(function (layer) {
     var copy = stage.querySelector('.hero').cloneNode(true);
     copy.setAttribute('inert', '');
     copy.removeAttribute('aria-labelledby');
@@ -629,7 +631,16 @@
 
   // ---------- Démarrage ----------
   function onScroll() { update(); updatePourqui(); updatePhare(); }
-  function onResize() { measure(); measurePhare(); onScroll(); }
+  // Sur téléphone, la barre d'adresse qui apparaît/disparaît change la hauteur de l'écran à chaque
+  // défilement : on ne recalcule pas tout pour ça (sinon la page saute en arrière). Seuls un vrai
+  // changement de largeur ou un grand changement de hauteur (rotation) déclenchent un recalcul.
+  var lastW = window.innerWidth, lastH = window.innerHeight;
+  function onResize(e) {
+    var w = window.innerWidth, h = window.innerHeight;
+    if (e && e.type === 'resize' && w === lastW && Math.abs(h - lastH) < 160) { onScroll(); return; }
+    lastW = w; lastH = h;
+    measure(); measurePhare(); onScroll();
+  }
 
   measure();
   measurePhare();
