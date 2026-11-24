@@ -8,7 +8,7 @@
   <script>document.documentElement.classList.add('js');</script>
   <link rel="preload" href="fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/schibsted-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=2043543">
+  <link rel="stylesheet" href="css/style.css?v=mouette1">
 </head>
 <body>
 
@@ -59,9 +59,10 @@
   </div>
   <!-- ============ FIN BARRE DE NAVIGATION ============ -->
 
-  <!-- ============ LE PHARE (fixe, à droite de l'écran) ============ -->
-  <!-- Découvert par le sillage du bateau, il reste en place jusqu'à son éclat. -->
+  <!-- ============ LE PHARE (fixe, à droite de l'écran, sans animation) ============ -->
+  <!-- Découvert par le sillage du bateau, puis recouvert par la section blanche. -->
   <div class="phare-fixe" aria-hidden="true">
+    <div class="phare-fixe__in">
     <svg class="phare__tour" viewBox="0 0 140 420">
       <!-- rocher -->
       <path d="M0 420 C12 400 28 389 46 386 H94 C112 389 128 400 140 420Z"/>
@@ -86,8 +87,8 @@
       <rect x="43" y="86" width="54" height="6"/>
       <path d="M49 92 L53 100 H87 L91 92Z"/>
     </svg>
+    </div>
   </div>
-  <canvas class="phare__flash" aria-hidden="true"></canvas> <!-- faisceau + éclat -->
   <!-- ============ FIN PHARE ============ -->
 
   <!-- Filtre « eau » : déforme ce qui se trouve sous le sillage (utilisé dans style.css) -->
@@ -345,12 +346,30 @@
     <!-- Pause : « Pour qui » reste épinglé au centre de l'écran pendant cette hauteur (posée par main.js) -->
     <div class="escale__pause" aria-hidden="true"></div>
 
-    <!-- ============ PHARE (transition) + FONCTIONNEMENT ============ -->
-    <!-- Bloc très haut : l'écran reste figé. D'abord l'éclat du phare, puis les 4 étapes. -->
+    <!-- ============ MOUETTE (transition) + FONCTIONNEMENT ============ -->
+    <!-- Bloc très haut : l'écran reste figé. La mouette descend du haut de l'écran, la section
+         blanche se déroule derrière elle par-dessus « Pour qui », puis viennent les 4 étapes. -->
     <div class="phare">
       <div class="phare__stage">
 
-        <div class="phare__voile" aria-hidden="true"></div> <!-- assombrit l'ancienne page -->
+        <!-- La mouette (vue du dessus, 3 images de battement d'ailes). Placée par main.js. -->
+        <svg class="mouette" viewBox="0 0 60 44" aria-hidden="true">
+          <g class="mouette__img mouette__img--1">
+            <path class="mouette__aile" d="M26 18 C18 12 8 10 1 13 C8 17 18 21 26 23Z M34 18 C42 12 52 10 59 13 C52 17 42 21 34 23Z"/>
+            <path class="mouette__bout" d="M1 13 C4 12.8 7 13.4 9.5 14.9 C6.5 15.4 3.6 14.5 1 13Z M59 13 C56 12.8 53 13.4 50.5 14.9 C53.5 15.4 56.4 14.5 59 13Z"/>
+          </g>
+          <g class="mouette__img mouette__img--2">
+            <path class="mouette__aile" d="M26 18 C20 17 12 18 6 22 C13 23 20 23 26 23Z M34 18 C40 17 48 18 54 22 C47 23 40 23 34 23Z"/>
+            <path class="mouette__bout" d="M6 22 L11.5 19.4 L11.5 22.8Z M54 22 L48.5 19.4 L48.5 22.8Z"/>
+          </g>
+          <g class="mouette__img mouette__img--3">
+            <path class="mouette__aile" d="M26 18 C23 21 19 25 15 31 C20 29 24 26 26 23Z M34 18 C37 21 41 25 45 31 C40 29 36 26 34 23Z"/>
+            <path class="mouette__bout" d="M15 31 L17.4 26.9 L19.8 29.4Z M45 31 L42.6 26.9 L40.2 29.4Z"/>
+          </g>
+          <path class="mouette__corps" d="M27 9 L33 9 L32.5 13 C34.5 16 34.5 24 33 28 L27 28 C25.5 24 25.5 16 27.5 13Z"/>
+          <circle class="mouette__corps" cx="30" cy="31" r="3.6"/>
+          <path class="mouette__bec" d="M28.8 34.2 L30 37.5 L31.2 34.2Z"/>
+        </svg>
 
         <!-- ============ FONCTIONNEMENT ============ -->
         <section class="fonct" id="fonctionnement" aria-labelledby="fonct-titre">
@@ -359,31 +378,10 @@
             <h2 id="fonct-titre">Du premier article au système complet.</h2>
           </div>
 
-          <!-- Ligne directrice : un petit bateau qui descend. Sillage derrière lui, route en pointillés devant. -->
+          <!-- Ligne directrice : la mouette s'y pose (trajet derrière elle, route en pointillés devant). -->
           <div class="cap" aria-hidden="true">
-            <svg class="cap__sillage" viewBox="0 0 60 300" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="cap-fondu" x1="0" y1="1" x2="0" y2="0">
-                  <stop offset="0" stop-color="#8fc1de" stop-opacity="1"/>
-                  <stop offset="1" stop-color="#8fc1de" stop-opacity="0"/>
-                </linearGradient>
-                <linearGradient id="cap-eau" x1="0" y1="1" x2="0" y2="0">
-                  <stop offset="0" stop-color="#8fc1de" stop-opacity=".3"/>
-                  <stop offset="1" stop-color="#8fc1de" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <!-- main.js fait onduler ces deux tracés -->
-              <path class="cap__eau" d="M30 300 L5 0 H55Z" fill="url(#cap-eau)"/>
-              <path class="cap__bords" d="M30 300 L5 0 M30 300 L55 0" fill="none" stroke="url(#cap-fondu)" stroke-width="1.4"/>
-              <path class="cap__remous" d="M30 300 V40" fill="none" stroke="url(#cap-fondu)" stroke-width="1.4"/>
-            </svg>
+            <span class="cap__trace"></span>
             <span class="cap__route"></span>
-            <svg class="cap__bateau" viewBox="0 0 30 76">
-              <path class="boat__coque" d="M15 2 C23 16 26 34 25 54 Q25 68 21 73 H9 Q5 68 5 54 C4 34 7 16 15 2Z"/>
-              <path class="boat__pont" d="M15 11 C20 22 21.500 36 21 52 Q21 63 19 67 H11 Q9 63 9 52 C8.500 36 10 22 15 11Z"/>
-              <rect class="boat__pont" x="11.500" y="36" width="7" height="15" rx="2"/>
-              <circle cx="15" cy="27" r="1.800" fill="#0b2231"/>
-            </svg>
           </div>
 
           <!-- À gauche de la ligne : le nom de l'étape (une phrase), qui change au défilement -->
@@ -495,6 +493,6 @@
     <p class="footer__copy">© 2026 SILLAGE</p>
   </footer>
 
-  <script src="js/main.js?v=2043543"></script>
+  <script src="js/main.js?v=mouette1"></script>
 </body>
 </html>

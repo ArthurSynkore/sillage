@@ -258,18 +258,16 @@
     });
   }
 
-  // ---------- 4. Phare (éclat) + Fonctionnement ----------
+  // ---------- 4. Mouette (arrivée) + Fonctionnement ----------
   var escale = document.querySelector('.escale');
   var pourqui = escale.querySelector('.pourqui');
   var phare = escale.querySelector('.phare');
   var pStage = phare.querySelector('.phare__stage');
   var pAnchor = phare.querySelector('.phare__anchor');
-  var voile = phare.querySelector('.phare__voile');
   var fonct = phare.querySelector('.fonct');
+  var mouette = pStage.querySelector('.mouette');
   var phareFixe = document.querySelector('.phare-fixe');
-  var tour = phareFixe.querySelector('.phare__tour');
-  var fcv = document.querySelector('.phare__flash');
-  var fctx = fcv.getContext('2d');
+  var phareIn = phareFixe.querySelector('.phare-fixe__in');
   var grille = fonct.querySelector('.fonct__grille');
   var systeme = fonct.querySelector('.fonct__systeme');
   var niveau = fonct.querySelector('.fonct__niveau');
@@ -290,8 +288,7 @@
     }
   })();
 
-  var RAD = Math.PI / 180;
-  var PW, PH, FW, FH, pDiag, pDpr, flashSpan, pTotal, cases = [];
+  var PW, PH, lineX = 0, flashSpan, pTotal, cases = [];
   var lastN = -1, lastStep = -1;
 
   // Cases hors de la zone nette : part qui finit par s'allumer, et ce qu'elles contiennent
@@ -317,7 +314,8 @@
   function layoutGrid() {
     var mobile = PW <= 860;
     var nCols = mobile ? 5 : 8, rows = TOTAL / nCols, gap = mobile ? 8 : 12;
-    var lineX = mobile ? 28 : PW * 0.42, ecart = mobile ? 22 : 56;
+    lineX = mobile ? 28 : PW * 0.42;
+    var ecart = mobile ? 22 : 56;
     var originRow = mobile ? 3 : 2;
     var dotY = PH * (mobile ? 0.6 : 0.5);
     var availW = PW - lineX - ecart - (mobile ? 20 : 40);
@@ -393,12 +391,6 @@
   function measurePhare() {
     PW = pStage.clientWidth;
     PH = pStage.clientHeight;
-    FW = fcv.clientWidth;      // l'éclat couvre tout l'écran
-    FH = fcv.clientHeight;
-    pDiag = Math.hypot(FW, FH);
-    pDpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    fcv.width = Math.round(FW * pDpr);
-    fcv.height = Math.round(FH * pDpr);
     escale.style.setProperty('--pq-h', pourqui.offsetHeight + 'px');
     measurePourqui();
     flashSpan = pAnchor.offsetTop;
@@ -406,116 +398,34 @@
     layoutGrid();
   }
 
-  // Le sillage du petit bateau ondule doucement (dessin en 60 x 300, le bateau est en bas).
   var cap = fonct.querySelector('.cap');
-  var capEau = cap.querySelector('.cap__eau');
-  var capBords = cap.querySelector('.cap__bords');
-  var capY = 0, capActive = false, capRaf = 0;
+  var capY = 0;
 
-  function waveCap(now) {
-    capRaf = 0;
-    var time = now / 1000, left = [], right = [];
-    for (var i = 0; i <= 14; i++) {
-      var s = i / 14;                     // 0 = poupe du bateau, 1 = loin derrière
-      var y = (300 - s * 300).toFixed(1);
-      var half = 21 * s;
-      var amp = 4 * s;
-      left.push((30 - half + amp * Math.sin(s * 8 - time * 2.1)).toFixed(1) + ' ' + y);
-      right.push((30 + half + amp * Math.sin(s * 8 - time * 2.1 + 1.7)).toFixed(1) + ' ' + y);
-    }
-    capBords.setAttribute('d', 'M' + left.join(' L') + ' M' + right.join(' L'));
-    capEau.setAttribute('d', 'M' + left.join(' L') + ' L' + right.reverse().join(' L') + 'Z');
-    if (capActive) capRaf = requestAnimationFrame(waveCap);
-  }
+  // L'arrivée (f de 0 à 1, pendant que l'écran est figé) :
+  // 1. la mouette entre par le haut, au centre, et descend jusqu'à sa place sur la ligne directrice ;
+  // 2. derrière elle, l'écran devient blanc : la section blanche se déroule par-dessus « Pour qui »
+  //    (et recouvre le phare) ; une fois la mouette posée, le blanc finit de couler jusqu'en bas ;
+  // 3. le contenu de la section apparaît.
+  function renderArrivee(f) {
+    var a = smooth(0.04, 0.62, f);                      // descente de la mouette
+    var y0 = -40;
+    var gy = y0 + (capY - y0) * a;
+    var gx = PW / 2 + (lineX - PW / 2) * a;             // part du centre de l'écran et glisse vers la ligne directrice
+    mouette.style.transform = 'translate(' + gx.toFixed(1) + 'px,' + gy.toFixed(1) + 'px)';
+    mouette.style.visibility = f > 0 ? 'visible' : 'hidden';
 
-  // L'éclat : un faisceau qui tourne autour de la lanterne et passe face à nous.
-  function renderFlash(f) {
-    var u = clamp((f - 0.12) / 0.83, 0, 1) * 2 - 1;                       // -1 .. 1
-    var phi = 110 * RAD * (u < 0 ? -1 : 1) * Math.pow(Math.abs(u), 2.2);  // ralentit de face
-    var swap = f <= 0 ? 0 : f >= 1 ? 1 : smooth(-10 * RAD, 3 * RAD, phi); // 0 = ancienne page, 1 = nouvelle
+    // Bord du blanc : juste derrière la mouette, puis jusqu'en bas de l'écran
+    var edge = Math.max(0, gy - 18);
+    edge += (PH - edge) * smooth(0.64, 0.9, f);
+    if (f <= 0) edge = 0;
+    fonct.style.clipPath = edge >= PH - 0.5 ? 'none' : 'inset(0 0 ' + (PH - edge).toFixed(1) + 'px 0)';
+    phareIn.style.clipPath = edge > 0 ? 'inset(' + edge.toFixed(1) + 'px 0 0 0)' : '';
 
-    voile.style.opacity = (0.6 * smooth(0, 0.3, f)).toFixed(3);
-    fonct.style.opacity = swap.toFixed(3);
-    fonct.style.visibility = swap > 0 ? 'visible' : 'hidden';
-    pStage.classList.toggle('is-on', swap > 0.5);
-    // Menu en encre sur la section claire, de nouveau clair quand la section Rendez-vous (sombre) arrive
-    header.classList.toggle('header--ink', swap > 0.5 && rdv.getBoundingClientRect().top > 38);
-    // Le petit bateau descend du haut de l'écran et se cale à la fin de l'éclat.
-    var arrive = smooth(0.58, 1, f);
-    cap.style.setProperty('--by', (-50 + (capY + 50) * arrive).toFixed(1) + 'px');
-    capActive = swap > 0.5 && phare.getBoundingClientRect().bottom > 0;
-    if (capActive && !capRaf && !reduceMotion) capRaf = requestAnimationFrame(waveCap);
-
-    // Le phare était déjà là : il ne fait que disparaître dans l'éclat.
-    tour.style.opacity = (1 - swap).toFixed(3);
-
-    fctx.setTransform(pDpr, 0, 0, pDpr, 0, 0);
-    fctx.clearRect(0, 0, FW, FH);
-    if (f <= 0 || f >= 1 || reduceMotion) return;
-
-    // Lanterne (position du feu dans le dessin du phare : 66 / 420 de sa hauteur)
-    var tr = tour.getBoundingClientRect();
-    var cx = tr.left + tr.width / 2;
-    var cy = tr.top + tr.height * (66 / 420);
-
-    // Bout du faisceau en 3D, puis projection en perspective.
-    // De face, le disque de lumière vient se centrer sur l'écran.
-    var L = 0.93, X = L * Math.sin(phi), Z = L * Math.cos(phi);
-    var s = 1 / (1 - Z), sMax = 1 / (1 - L);
-    var near = clamp((s - 1) / (sMax - 1), 0, 1);
-    var tx = cx + X * Math.min(s, 3) * FW * 0.5 + (FW / 2 - cx) * near;
-    var ty = cy + (FH / 2 - cy) * near;
-    var r = 0.52 * pDiag * s / sMax;
-    var a = smooth(0.08, 0.2, f) * (1 - smooth(0.82, 0.96, f)) * (0.4 + 0.6 * smooth(-0.25, 0.25, Z));
-
-    fctx.shadowColor = 'rgba(255,214,90,' + (0.8 * a).toFixed(3) + ')';
-    fctx.shadowBlur = 36 * pDpr;
-
-    // Cône
-    var dx = tx - cx, dy = ty - cy, d = Math.hypot(dx, dy);
-    if (d > r + 1) {
-      var alpha = Math.asin(r / d), tl = Math.sqrt(d * d - r * r);
-      var ux = dx / d, uy = dy / d;
-      var t1 = rot([ux, uy], alpha), t2 = rot([ux, uy], -alpha);
-      var g = fctx.createLinearGradient(cx, cy, tx, ty);
-      g.addColorStop(0, 'rgba(255,224,120,' + (0.9 * a).toFixed(3) + ')');
-      g.addColorStop(1, 'rgba(255,224,120,' + (0.4 * a).toFixed(3) + ')');
-      fctx.fillStyle = g;
-      fctx.beginPath();
-      fctx.moveTo(cx, cy);
-      fctx.lineTo(cx + t1[0] * tl, cy + t1[1] * tl);
-      fctx.lineTo(cx + t2[0] * tl, cy + t2[1] * tl);
-      fctx.closePath();
-      fctx.fill();
-    }
-
-    // Disque au bout du faisceau (grossit en venant vers nous)
-    var gd = fctx.createRadialGradient(tx, ty, 0, tx, ty, r);
-    gd.addColorStop(0, 'rgba(255,247,210,' + (0.95 * a).toFixed(3) + ')');
-    gd.addColorStop(0.6, 'rgba(255,222,115,' + (0.8 * a).toFixed(3) + ')');
-    gd.addColorStop(1, 'rgba(255,214,90,' + (0.4 * a).toFixed(3) + ')');
-    fctx.fillStyle = gd;
-    fctx.beginPath();
-    fctx.arc(tx, ty, r, 0, Math.PI * 2);
-    fctx.fill();
-    fctx.shadowBlur = 0;
-
-    // Éclat plein écran quand le faisceau est face à nous
-    var wash = Math.pow(Math.max(0, Math.cos(phi)), 8) * a;
-    if (wash > 0.003) {
-      var gw = fctx.createRadialGradient(FW / 2, FH / 2, 0, FW / 2, FH / 2, pDiag / 2);
-      gw.addColorStop(0, 'rgba(255,243,185,' + wash.toFixed(3) + ')');
-      gw.addColorStop(1, 'rgba(255,214,90,' + (0.85 * wash).toFixed(3) + ')');
-      fctx.fillStyle = gw;
-      fctx.fillRect(0, 0, FW, FH);
-    }
-
-    // Halo de la lanterne
-    var gl = fctx.createRadialGradient(cx, cy, 0, cx, cy, 46);
-    gl.addColorStop(0, 'rgba(255,247,210,' + (a * (1 - swap)).toFixed(3) + ')');
-    gl.addColorStop(1, 'rgba(255,214,90,0)');
-    fctx.fillStyle = gl;
-    fctx.fillRect(cx - 46, cy - 46, 92, 92);
+    fonct.style.setProperty('--c', smooth(0.84, 1, f).toFixed(3));
+    cap.style.setProperty('--by', capY.toFixed(1) + 'px');
+    pStage.classList.toggle('is-on', edge > PH * 0.5);
+    // Menu en encre sur le blanc, de nouveau clair quand la section Rendez-vous (sombre) arrive
+    header.classList.toggle('header--ink', edge > 38 && rdv.getBoundingClientRect().top > 38);
   }
 
   // Les étapes : le texte change, les graduations défilent, les cases se remplissent.
@@ -553,7 +463,7 @@
   function updatePhare() {
     var top = phare.getBoundingClientRect().top;
     var sc = clamp(-top, 0, pTotal);
-    renderFlash(clamp(sc / flashSpan, 0, 1));
+    renderArrivee(clamp(sc / flashSpan, 0, 1));
     renderSteps(clamp((sc - flashSpan) / (pTotal - flashSpan), 0, 1));
   }
 
@@ -675,9 +585,9 @@
 
   // ---------- 6. Pour qui : épinglage + textes qui s'assoient ----------
   // La section se fige au centre de l'écran (ou en bas si elle est plus haute que l'écran)
-  // pendant PAUSE × hauteur d'écran, avant l'éclat du phare. Pendant ce temps, titres et
+  // pendant PAUSE × hauteur d'écran, avant l'arrivée de la mouette. Pendant ce temps, titres et
   // lignes se posent un par un. L'animation suit le défilement : elle s'inverse si on remonte.
-  var PAUSE = 0.8;
+  var PAUSE = 1.4;
   var pause = escale.querySelector('.escale__pause');
   var assis = [];
   (function () {
