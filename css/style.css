@@ -359,14 +359,19 @@ body.menu-open { overflow: hidden; }
   fill: none; stroke: var(--signal); stroke-width: 2.2; stroke-linecap: round; vector-effect: non-scaling-stroke;
 }
 .courbe__trace { clip-path: inset(-10% calc((1 - var(--p)) * 100%) -10% 0); }
-/* Point d'arrivée (semaine 7) */
+/* Point d'arrivée (semaine 7) + onde discrète */
 .courbe__point {
   position: absolute; right: 0; top: calc(10 / 130 * 100%);
   width: 9px; height: 9px; margin: -4.5px -4.5px 0 0; border-radius: 50%;
   background: var(--signal); box-shadow: 0 0 0 3px var(--sea);
   opacity: calc((var(--p) - .9) * 10);
 }
-
+.courbe__point::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  border: 1.5px solid var(--signal); animation: onde 2.4s ease-out infinite;
+}
+@keyframes onde { from { transform: scale(1); opacity: .7; } to { transform: scale(3.4); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .courbe__point::after { animation: none; } }
 .courbe__axe { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: rgb(245 242 234 / .45); }
 
 /* Barres de part de voix */

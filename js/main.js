@@ -68,6 +68,7 @@
   var W, H, diag, dpr, scale, start, dir, back, travel, heading;
   var t = 0;          // progression de 0 à 1
   var raf = 0;
+  var t0 = performance.now();
 
   function clamp(x, a, b) { return Math.min(b, Math.max(a, x)); }
   function smooth(a, b, x) { x = clamp((x - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); }
@@ -220,10 +221,11 @@
     rim.style.clipPath = rimClip;
   }
 
-  // Le sillage ne bouge qu'avec le défilement : aucune ondulation continue.
-  function frame() {
+  function frame(now) {
     raf = 0;
-    render(0);
+    render(reduceMotion ? 0 : (now - t0) / 1000);
+    // Tant que la traversée est en cours, l'eau continue d'onduler.
+    if (!reduceMotion && t > 0 && t < 0.995) raf = requestAnimationFrame(frame);
   }
 
   function update() {
