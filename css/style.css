@@ -158,12 +158,8 @@ body.menu-open { overflow: hidden; }
   padding: calc(var(--header-h) + 16px) var(--pad) 96px;
   display: flex; flex-direction: column; justify-content: center;
   overflow: hidden;
-  /* Couleur de secours (et des copies du hero dans le sillage) : eau claire sur fond pâle */
-  background: #e9f1f0;
+  background: var(--paper);
 }
-/* Eau claire vue d'en haut, rendue en WebGL par js/eau.js (caustiques + vagues sous la souris) */
-.hero__eau { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity .8s ease; }
-.hero__eau.is-ready { opacity: 1; }
 
 /* Carte marine en fond */
 .hero__chart {
@@ -171,6 +167,17 @@ body.menu-open { overflow: hidden; }
   color: var(--ink); opacity: .11;
   pointer-events: none;
 }
+/* Les lignes de fond respirent très lentement, chacune avec son propre décalage, comme une houle lointaine */
+.isobathe {
+  transform-box: view-box; transform-origin: 1080px 540px;
+  animation: houle 16s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -2.1s);
+}
+@keyframes houle {
+  from { transform: scale(.992) rotate(-.35deg) translate(-4px, 3px); }
+  to   { transform: scale(1.014) rotate(.35deg) translate(5px, -4px); }
+}
+@media (prefers-reduced-motion: reduce) { .isobathe { animation: none; } }
 .hero__sondes { font-size: 13px; fill: currentColor; opacity: 2.6; }
 
 /* Rose des vents */
